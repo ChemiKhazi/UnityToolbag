@@ -8,10 +8,10 @@ anything else.
 
 UnityLock adds a "UnityLock" submenu to the GameObject menu in Unity. Inside this submenu are four menu items:
 
-  Lock Game Object
-  Lock Game Object and Children (Shortcut: Cmd-Shift-L for OS X or Control-Shift-L for Windows)
-  Unlock Game Object
-  Unlock Game Object and Children (Shortcut: Cmd-Shift-U for OS X or Control-Shift-U for Windows)
+ - Lock Game Object
+ - Lock Game Object and Children (Shortcut: Cmd-Shift-L for OS X or Control-Shift-L for Windows)
+ - Unlock Game Object
+ - Unlock Game Object and Children (Shortcut: Cmd-Shift-U for OS X or Control-Shift-U for Windows)
 
 These all behave the same way with regards to the objects, however you can choose whether you want to lock only the selected
 game object(s) or if you'd like to lock their children as well. Given that most people want to lock an entire hierarchy, those
