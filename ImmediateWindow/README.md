@@ -18,7 +18,7 @@ Any compilation errors are printed below the Compile + Run button for quick acce
 Example Scripts
 ---
 
-Here are a few sample scripts that are fun to play with. Use the example scene as many of these are for manipulating selected objects.
+Here are a few sample scripts that are fun to play with.
 
 Creating a new object from code:
 
