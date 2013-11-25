@@ -23,7 +23,7 @@
 
 using UnityEngine;
 
-namespace NGToolbag
+namespace UnityToolbag
 {
     // Component does nothing; editor script does all the magic
     public class SortingLayerExposed : MonoBehaviour { }

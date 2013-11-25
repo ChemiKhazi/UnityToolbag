@@ -24,7 +24,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace NGToolbag
+namespace UnityToolbag
 {
     public class SnapToSurface : EditorWindow
     {

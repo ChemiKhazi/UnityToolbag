@@ -27,7 +27,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace NGToolbag
+namespace UnityToolbag
 {
     /// <summary>
     /// Provides an editor window for quickly compiling and running snippets of code.

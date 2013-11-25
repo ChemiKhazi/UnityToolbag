@@ -28,7 +28,7 @@ using Microsoft.CSharp;
 using UnityEditor;
 using UnityEngine;
 
-namespace NGToolbag
+namespace UnityToolbag
 {
     /// <summary>
     /// Provides a simple interface for dynamically compiling C# code.

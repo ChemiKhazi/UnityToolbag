@@ -24,7 +24,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace NGToolbag
+namespace UnityToolbag
 {
     [CustomEditor(typeof(SortingLayerExposed))]
     public class SortingLayerExposedEditor : Editor

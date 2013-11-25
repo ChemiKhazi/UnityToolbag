@@ -1,4 +1,4 @@
-NGToolbag
+UnityToolbag
 ===
 
 This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder will get its own README to explain the usage. All scripts are being written with the latest Unity 4.3 and may or may not work in earlier versions.

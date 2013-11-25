@@ -26,7 +26,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace NGToolbag
+namespace UnityToolbag
 {
     [InitializeOnLoad]
     public class UnityLock : EditorWindow
