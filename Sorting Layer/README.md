@@ -36,3 +36,5 @@ In this case both of these fields will show a dropdown of the sorting layers in 
     renderer.sortingLayerName = sortLayer2;
 
 This is good, for example, to have an object that starts on one layer (say, the background) but later needs to be moved to the foreground layer.
+
+Do note that either data type can fail later on if you're not careful. The integer value is based on the ordering of the layers so if you re-order them around, your integers may not line up with the layers you intended. Likewise if you store the name as a string, you must take care when renaming layers or else you end up with the wrong value as well. It's up to you to ensure that you pick the approach that works best for you.
