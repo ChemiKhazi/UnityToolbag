@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Nick Gravelyn.
+ * Copyright (c) 2013-2014, Nick Gravelyn.
  *
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
@@ -22,40 +22,33 @@
  */
 
 using System;
-using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 
 namespace UnityToolbag {
     [CustomEditor(typeof(SortingLayerExposed))]
     public class SortingLayerExposedEditor : Editor {
-        private string[] _sortingLayerNames;
-
-        void OnEnable()  {
-            var internalEditorUtilityType = Type.GetType("UnityEditorInternal.InternalEditorUtility, UnityEditor");
-            var sortingLayersProperty = internalEditorUtilityType.GetProperty("sortingLayerNames", BindingFlags.Static | BindingFlags.NonPublic);
-            _sortingLayerNames = sortingLayersProperty.GetValue(null, new object[0]) as string[];
-        }
-
         public override void OnInspectorGUI() {
             // Get the renderer from the target object
             var renderer = (target as SortingLayerExposed).gameObject.renderer;
 
             // If there is no renderer, we can't do anything
             if (!renderer) {
+                EditorGUILayout.HelpBox("SortingLayerExposed must be added to a game object that has a renderer.", MessageType.Error);
                 return;
             }
+
+            var sortingLayerNames = SortingLayerHelper.sortingLayerNames;
 
             // If we have the sorting layers array, we can make a nice dropdown. For stability's sake, if the array is null
             // we just use our old logic. This makes sure the script works in some fashion even if Unity changes the name of
             // that internal field we reflected.
-            if (_sortingLayerNames != null) {
-                // Expose drop down for sorting layer
-                int layerIndex = Array.IndexOf(_sortingLayerNames, renderer.sortingLayerName);
-                int newLayerIndex = EditorGUILayout.Popup("Sorting Layer", layerIndex, _sortingLayerNames);
-                if (newLayerIndex != layerIndex) {
+            if (sortingLayerNames != null) {
+                // Expose drop down for sorting layer by name (though we only ever use/store the ID)
+                int newLayerIndex = EditorGUILayout.Popup("Sorting Layer", renderer.sortingLayerID, sortingLayerNames);
+                if (newLayerIndex != renderer.sortingLayerID) {
                     Undo.RecordObject(renderer, "Edit Sorting Layer");
-                    renderer.sortingLayerName = _sortingLayerNames[newLayerIndex];
+                    renderer.sortingLayerID = newLayerIndex;
                     EditorUtility.SetDirty(renderer);
                 }
             }
