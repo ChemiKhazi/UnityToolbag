@@ -29,7 +29,10 @@ namespace UnityToolbag {
     public class SortingLayerDrawer : PropertyDrawer {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             var sortingLayerNames = SortingLayerHelper.sortingLayerNames;
-            if (sortingLayerNames != null) {
+            if (property.propertyType != SerializedPropertyType.Integer) {
+                EditorGUI.HelpBox(position, "SortingLayerAttribute is only valid on integer fields.", MessageType.Error);
+            }
+            else if (sortingLayerNames != null) {
                 EditorGUI.BeginProperty(position, label, property);
                 int newLayerIndex = EditorGUI.Popup(position, label.text, property.intValue, sortingLayerNames);
                 if (newLayerIndex != property.intValue) {
@@ -38,7 +41,12 @@ namespace UnityToolbag {
                 EditorGUI.EndProperty();
             }
             else {
-                base.OnGUI(position, property, label);
+                EditorGUI.BeginProperty(position, label, property);
+                int newValue = EditorGUI.IntField(position, label.text, property.intValue);
+                if (newValue != property.intValue) {
+                    property.intValue = newValue;
+                }
+                EditorGUI.EndProperty();
             }
         }
     }
