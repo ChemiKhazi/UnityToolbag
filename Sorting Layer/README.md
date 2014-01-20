@@ -18,18 +18,21 @@ _This attribute/property drawer was adapted from [ChemiKhazi's pull request](htt
 
 ![Readme_SortingLayerAttribute.png](https://raw.github.com/nickgravelyn/UnityToolbag/master/Sorting%20Layer/Readme_SortingLayerAttribute.png)
 
-If you want to change an object's sorting layer at runtime but want to configure it in the inspector, this is the better option. Using attributes, you can have any regular integer property show up as a sorting layer in the Inspector. Example usage:
+If you want to change an object's sorting layer at runtime but want to configure it in the inspector, this is the better option. Using attributes, you can have any regular integer or string property show up as a sorting layer in the Inspector. Example usage:
 
     public class SortLayerTest : MonoBehaviour {
         [UnityToolbag.SortingLayer]
         public int sortLayer1;
 
         [UnityToolbag.SortingLayer]
-        public int sortLayer2;
+        public string sortLayer2;
     }
 
 In this case both of these fields will show a dropdown of the sorting layers in the inspector, storing off their IDs. Then you can apply them easily later on:
 
+    // Note: it's not necessary to apply changes to both sortingLayerID and sortingLayerName.
+    // We're doing it here only to show the two ways to accomplish the same thing.
     renderer.sortingLayerID = sortLayer1;
+    renderer.sortingLayerName = sortLayer2;
 
 This is good, for example, to have an object that starts on one layer (say, the background) but later needs to be moved to the foreground layer.

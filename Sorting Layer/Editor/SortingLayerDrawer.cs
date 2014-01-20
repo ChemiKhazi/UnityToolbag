@@ -23,28 +23,47 @@
 
 using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace UnityToolbag {
     [CustomPropertyDrawer(typeof(SortingLayerAttribute))]
     public class SortingLayerDrawer : PropertyDrawer {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             var sortingLayerNames = SortingLayerHelper.sortingLayerNames;
-            if (property.propertyType != SerializedPropertyType.Integer) {
-                EditorGUI.HelpBox(position, "SortingLayerAttribute is only valid on integer fields.", MessageType.Error);
+            if (property.propertyType != SerializedPropertyType.Integer &&
+                property.propertyType != SerializedPropertyType.String) {
+                EditorGUI.HelpBox(position, string.Format("{0} is neither a string nor integer but has SortingLayerAttribute.", property.name), MessageType.Error);
             }
             else if (sortingLayerNames != null) {
                 EditorGUI.BeginProperty(position, label, property);
-                int newLayerIndex = EditorGUI.Popup(position, label.text, property.intValue, sortingLayerNames);
-                if (newLayerIndex != property.intValue) {
-                    property.intValue = newLayerIndex;
+                if (property.propertyType == SerializedPropertyType.Integer) {
+                    int newLayerIndex = EditorGUI.Popup(position, label.text, property.intValue, sortingLayerNames);
+                    if (newLayerIndex != property.intValue) {
+                        property.intValue = newLayerIndex;
+                    }
+                }
+                else {
+                    int currentLayerIndex = Array.IndexOf(sortingLayerNames, property.stringValue);
+                    int newLayerIndex = EditorGUI.Popup(position, label.text, currentLayerIndex, sortingLayerNames);
+                    if (newLayerIndex != currentLayerIndex) {
+                        property.stringValue = sortingLayerNames[newLayerIndex];
+                    }
                 }
                 EditorGUI.EndProperty();
             }
             else {
                 EditorGUI.BeginProperty(position, label, property);
-                int newValue = EditorGUI.IntField(position, label.text, property.intValue);
-                if (newValue != property.intValue) {
-                    property.intValue = newValue;
+                if (property.propertyType == SerializedPropertyType.Integer) {
+                    int newValue = EditorGUI.IntField(position, label.text, property.intValue);
+                    if (newValue != property.intValue) {
+                        property.intValue = newValue;
+                    }
+                }
+                else {
+                    string newValue = EditorGUI.TextField(position, label.text, property.stringValue);
+                    if (newValue != property.stringValue) {
+                        property.stringValue = newValue;
+                    }
                 }
                 EditorGUI.EndProperty();
             }
