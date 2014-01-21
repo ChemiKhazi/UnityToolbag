@@ -4,7 +4,7 @@ using System.IO;
 
 public static class ScriptableObjectUtility
 {
-    public static void CreateAsset<T>() where T : ScriptableObject
+    public static T CreateAsset<T>() where T : ScriptableObject
     {
         T asset = ScriptableObject.CreateInstance<T>();
 
@@ -25,5 +25,7 @@ public static class ScriptableObjectUtility
         AssetDatabase.SaveAssets();
         EditorUtility.FocusProjectWindow();
         Selection.activeObject = asset;
+
+        return asset;
     }
 }
