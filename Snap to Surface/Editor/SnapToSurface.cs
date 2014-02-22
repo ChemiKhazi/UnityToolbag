@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Nick Gravelyn.
+ * Copyright (c) 2014, Nick Gravelyn.
  *
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
