@@ -34,6 +34,8 @@ namespace UnityToolbag
     /// </summary>
     public class ImmediateWindow : EditorWindow
     {
+        private const string EditorPrefsKey = "UnityToolbag.ImmediateWindow.LastText";
+
         // Positions for the two scroll views
         private Vector2 scrollPos;
         private Vector2 errorScrollPos;
@@ -44,6 +46,14 @@ namespace UnityToolbag
         // Stored away compiler errors (if any) and the compiled method
         private CompilerErrorCollection compilerErrors = null;
         private MethodInfo compiledMethod = null;
+
+        void OnEnable()
+        {
+            if (EditorPrefs.HasKey(EditorPrefsKey))
+            {
+                scriptText = EditorPrefs.GetString(EditorPrefsKey);
+            }
+        }
 
         void OnGUI()
         {
@@ -57,6 +67,7 @@ namespace UnityToolbag
             if (scriptText != newScriptText)
             {
                 scriptText = newScriptText;
+                EditorPrefs.SetString(EditorPrefsKey, scriptText);
                 compiledMethod = null;
             }
 
