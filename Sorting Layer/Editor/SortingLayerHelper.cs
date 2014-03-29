@@ -25,23 +25,25 @@ using UnityEngine;
 using System;
 using System.Reflection;
 
-// Helpers used by the different sorting layer classes.
-public static class SortingLayerHelper {
-    // Gets an array of sorting layer names.
-    // Since this uses reflection, callers should check for 'null' which will be returned if the reflection fails.
-    public static string[] sortingLayerNames {
-        get {
-            var internalEditorUtilityType = Type.GetType("UnityEditorInternal.InternalEditorUtility, UnityEditor");
-            if (internalEditorUtilityType == null) {
-                return null;
-            }
+namespace UnityToolbag {
+    // Helpers used by the different sorting layer classes.
+    public static class SortingLayerHelper {
+        // Gets an array of sorting layer names.
+        // Since this uses reflection, callers should check for 'null' which will be returned if the reflection fails.
+        public static string[] sortingLayerNames {
+            get {
+                var internalEditorUtilityType = Type.GetType("UnityEditorInternal.InternalEditorUtility, UnityEditor");
+                if (internalEditorUtilityType == null) {
+                    return null;
+                }
 
-            var sortingLayersProperty = internalEditorUtilityType.GetProperty("sortingLayerNames", BindingFlags.Static | BindingFlags.NonPublic);
-            if (sortingLayersProperty == null) {
-                return null;
-            }
+                var sortingLayersProperty = internalEditorUtilityType.GetProperty("sortingLayerNames", BindingFlags.Static | BindingFlags.NonPublic);
+                if (sortingLayersProperty == null) {
+                    return null;
+                }
 
-            return sortingLayersProperty.GetValue(null, new object[0]) as string[];
+                return sortingLayersProperty.GetValue(null, new object[0]) as string[];
+            }
         }
     }
 }
