@@ -6,7 +6,9 @@ In this folder will live any code generators that are useful during development.
 CodeGenTagsAndLayers ("Tags and Layers" in the menu)
 ---
 
-This generator will create a single file containing constants for all tags, sorting layers, and layers defined in the editor. When you first run the command it will prompt you for a directory in which to save `TagsAndLayers.cs`. Each time after this, it will find that file and replace it, making it very quick to re-run the process.
+This generator will create a single file containing constants for all tags, sorting layers, and layers defined in the editor.
+
+When you first run the command it will prompt you for a directory in which to save `TagsAndLayers.cs`. Each time after this, it will find that file and replace it, making it very quick to re-run the process.
 
 This is an example of what you'll see in `TagsAndLayers.cs`:
 
@@ -38,3 +40,18 @@ This is an example of what you'll see in `TagsAndLayers.cs`:
         public const int Layer8 = 8;
         public const int Layer12 = 12;
     }
+
+CodeGenScenes ("Scenes" in the menu)
+---
+
+This generator will create a single file containing constants for all scenes currently enabled in the Build window. This is a great way to make your LoadLevel calls safer by using compile time constants instead of directly using strings or integers.
+
+When you first run the command it will prompt you for a directory in which to save `Scenes.cs`. Each time after this, it will find that file and replace it, making it very quick to re-run the process.
+
+This is an example of what you'll see in `Scenes.cs`.
+
+    public static class Scenes {
+        public const int TestScene = 0;
+        public const int TestScene2 = 1;
+    }
+
