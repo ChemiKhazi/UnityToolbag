@@ -44,11 +44,19 @@ namespace UnityToolbag {
             // we just use our old logic. This makes sure the script works in some fashion even if Unity changes the name of
             // that internal field we reflected.
             if (sortingLayerNames != null) {
-                // Expose drop down for sorting layer by name (though we only ever use/store the ID)
-                int newLayerIndex = EditorGUILayout.Popup("Sorting Layer", renderer.sortingLayerID, sortingLayerNames);
-                if (newLayerIndex != renderer.sortingLayerID) {
+                // Look up the layer name using the current layer ID
+                string oldName = SortingLayerHelper.GetSortingLayerNameFromID(renderer.sortingLayerID);
+
+                // Use the name to look up our array index into the names list
+                int oldLayerIndex = Array.IndexOf(sortingLayerNames, oldName);
+
+                // Show the popup for the names
+                int newLayerIndex = EditorGUILayout.Popup("Sorting Layer", oldLayerIndex, sortingLayerNames);
+
+                // If the index changes, look up the ID for the new index to store as the new ID
+                if (newLayerIndex != oldLayerIndex) {
                     Undo.RecordObject(renderer, "Edit Sorting Layer");
-                    renderer.sortingLayerID = newLayerIndex;
+                    renderer.sortingLayerID = SortingLayerHelper.GetSortingLayerIDForIndex(newLayerIndex);
                     EditorUtility.SetDirty(renderer);
                 }
             }
