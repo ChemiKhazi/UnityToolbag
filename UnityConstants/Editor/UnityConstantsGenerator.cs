@@ -69,7 +69,9 @@ namespace UnityToolbag {
                 if (sortingLayerNames != null) {
                     writer.WriteLine("    public static class SortingLayers {");
                     for (int i = 0; i < sortingLayerNames.Length; i++) {
-                        writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(sortingLayerNames[i]), i);
+                        var name = sortingLayerNames[i];
+                        int id = SortingLayerHelper.GetSortingLayerIDForName(name);
+                        writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(name), id);
                     }
                     writer.WriteLine("    }");
                     writer.WriteLine();
