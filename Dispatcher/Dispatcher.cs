@@ -97,7 +97,9 @@ namespace UnityToolbag
             });
 
             // Lock until the action has run
-            while (!hasRun) { }
+            while (!hasRun) {
+                Thread.Sleep(5);
+            }
         }
 
         void Awake()
