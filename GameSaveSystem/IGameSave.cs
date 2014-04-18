@@ -26,7 +26,7 @@ using System.IO;
 namespace UnityToolbag
 {
     /// <summary>
-    /// Defines the interface of a game save object that can be used with <see cref="GameSaveSystem{T}"/>.
+    /// Defines the interface of a game save object that can be used with <see cref="GameSaveSystem"/>.
     /// </summary>
     public interface IGameSave
     {
