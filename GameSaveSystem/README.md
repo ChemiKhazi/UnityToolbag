@@ -24,7 +24,7 @@ Save Locations
 
 The game save system uses custom paths on desktop platforms to form more correct paths than Unity, whose `Application.persistentDataPath` is at best not ideal and at worst a terrible path for game saves.
 
-Keep in mind the `{Company}` part of the paths used by this library are conditional on you passing in a company name to Initialize; if you pass in `null` that part of the path is left out.
+If you'd prefer to not include your company name in the file paths below, simply keep the `companyName` field of the `GameSaveSystemSettings` object you pass to `GameSaveSystem.Initialize` as null. If the field is null, the `{Company}` parts of the paths below will be omitted.
 
 ### Windows
 
