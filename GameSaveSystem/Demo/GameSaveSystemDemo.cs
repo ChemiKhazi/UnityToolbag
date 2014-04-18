@@ -63,9 +63,6 @@ namespace UnityToolbag
                 _isLoading = true;
 
                 // Load the save and handle the results.
-                // Callback methods are NOT guaranteed to run on any particular thread. If you must
-                // run things on the main thread, you should store the IFuture<DemoGameSave> returned
-                // and poll it inside a coroutine or an update method.
                 GameSaveSystem.Load<DemoGameSave>("demosave", forceFromDisk)
                     .OnSuccess(f =>
                     {
@@ -94,9 +91,6 @@ namespace UnityToolbag
                 _isSaving = true;
 
                 // Save our game save and handle the result
-                // Callback methods are NOT guaranteed to run on any particular thread. If you must
-                // run things on the main thread, you should store the IFuture<DemoGameSave> returned
-                // and poll it inside a coroutine or an update method.
                 GameSaveSystem.Save<DemoGameSave>("demosave", _gameSave)
                     .OnSuccess(f => Debug.Log("Save successful.", this))
                     .OnError(f => Debug.LogWarning("Save failed: " + f.error.Message, this))
