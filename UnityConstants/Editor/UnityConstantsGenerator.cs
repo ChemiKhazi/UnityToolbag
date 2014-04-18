@@ -57,10 +57,12 @@ namespace UnityToolbag
             using (var writer = new StreamWriter(filePath)) {
                 writer.WriteLine("// This file is auto-generated. Modifications are not saved.");
                 writer.WriteLine();
-                writer.WriteLine("namespace UnityConstants {");
+                writer.WriteLine("namespace UnityConstants");
+                writer.WriteLine("{");
 
                 // Write out the tags
-                writer.WriteLine("    public static class Tags {");
+                writer.WriteLine("    public static class Tags");
+                writer.WriteLine("    {");
                 foreach (var tag in UnityEditorInternal.InternalEditorUtility.tags) {
                     writer.WriteLine("        public const string {0} = \"{1}\";", MakeSafeForCode(tag), tag);
                 }
@@ -70,7 +72,8 @@ namespace UnityToolbag
                 // Write out sorting layers
                 var sortingLayerNames = SortingLayerHelper.sortingLayerNames;
                 if (sortingLayerNames != null) {
-                    writer.WriteLine("    public static class SortingLayers {");
+                    writer.WriteLine("    public static class SortingLayers");
+                    writer.WriteLine("    {");
                     for (int i = 0; i < sortingLayerNames.Length; i++) {
                         var name = sortingLayerNames[i];
                         int id = SortingLayerHelper.GetSortingLayerIDForName(name);
@@ -81,7 +84,8 @@ namespace UnityToolbag
                 }
 
                 // Write out layers
-                writer.WriteLine("    public static class Layers {");
+                writer.WriteLine("    public static class Layers");
+                writer.WriteLine("    {");
                 for (int i = 0; i < 32; i++) {
                     string layer = UnityEditorInternal.InternalEditorUtility.GetLayerName(i);
                     if (!string.IsNullOrEmpty(layer)) {
@@ -92,7 +96,8 @@ namespace UnityToolbag
                 writer.WriteLine();
 
                 // Write out scenes
-                writer.WriteLine("    public static class Scenes {");
+                writer.WriteLine("    public static class Scenes");
+                writer.WriteLine("    {");
                 for (int i = 0; i < EditorBuildSettings.scenes.Length; i++) {
                     writer.WriteLine(
                         "        public const int {0} = {1};",

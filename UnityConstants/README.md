@@ -32,8 +32,10 @@ This is an example of what you'll see in `UnityConstants.cs`:
         {
             public const int Default = 0;
             public const int Second = 1;
-            public const int Another = 2;
             public const int NewLayer3 = 3;
+            public const int Another = 2;
+            public const int NewLayer5 = 5;
+            public const int Foreground = 7;
         }
 
         public static class Layers
@@ -50,6 +52,7 @@ This is an example of what you'll see in `UnityConstants.cs`:
         {
             public const int TestScene = 0;
             public const int TestScene2 = 1;
+            public const int GameSaveSystemDemo = 2;
         }
     }
 
