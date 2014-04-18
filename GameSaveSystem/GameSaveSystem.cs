@@ -61,6 +61,11 @@ namespace UnityToolbag
         /// <param name="gameName">The name of the game. Must be safe for use as a directory name.</param>
         public static void Initialize(string companyName, string gameName)
         {
+            // We only require the game name; the company can be omitted if that's preferred for creating the save location.
+            if (string.IsNullOrEmpty(gameName)) {
+                throw new ArgumentException("gameName must be a non-empty string!");
+            }
+
             if (_isInitialized) {
                 return;
             }
@@ -68,26 +73,30 @@ namespace UnityToolbag
             // Find the base path for where we want to save game saves. Unity's persistentDataPath is generally unacceptable
             // to me. In Windows it uses some AppData folder, in OS X it (quite incorrectly) puts saves into a Cache folder,
             // and I have no idea what they use on Linux but I'm assuming it's not what I want.
-            // So we'll use these paths because I think they're better:
-            // Windows: C:\Users\{User}\Documents\My Games\{Company}\{Game}
-            // OSX: /Users/{User}/Library/Application Support/{Company}/{Game}
-            // Linux: /users/{User}/.local/share/{Company}/{Game}
-#if UNITY_STANDALONE_OSX
-            _fileSaveLocation = Path.Combine(Environment.GetEnvironmentVariable("HOME"), "Library/Application Support");
-            _fileSaveLocation = Path.Combine(_fileSaveLocation, string.Format("{0}/{1}", companyName, gameName));
-#elif UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN
             _fileSaveLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games");
-            _fileSaveLocation = Path.Combine(_fileSaveLocation, string.Format("{0}\\{1}", companyName, gameName));
+#elif UNITY_STANDALONE_OSX
+            _fileSaveLocation = Path.Combine(Environment.GetEnvironmentVariable("HOME"), "Library/Application Support");
 #elif UNITY_STANDALONE_LINUX
             string home = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             if (string.IsNullOrEmpty(home)) {
                 home = Environment.GetEnvironmentVariable("HOME");
             }
             _fileSaveLocation = Path.Combine(home, ".local/share");
-            _fileSaveLocation = Path.Combine(_fileSaveLocation, string.Format("{0}/{1}", companyName, gameName));
 #else
             // For any non Mac/Windows/Linux platform, we'll default back to the persistentDataPath since we know it should work.
             _fileSaveLocation = Application.persistentDataPath;
+#endif
+
+            // Do final cleanup on the path if we're on a desktop platform
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
+            // Company name is optional so we check before appending it
+            if (!string.IsNullOrEmpty(companyName)) {
+                _fileSaveLocation = Path.Combine(_fileSaveLocation, companyName);
+            }
+
+            _fileSaveLocation = Path.Combine(_fileSaveLocation, gameName);
+            _fileSaveLocation = Path.GetFullPath(_fileSaveLocation);
 #endif
 
             // Ensure the directory for saves exists.

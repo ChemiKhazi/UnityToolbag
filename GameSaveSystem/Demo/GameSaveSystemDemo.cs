@@ -36,7 +36,9 @@ namespace UnityToolbag
 
         void Start()
         {
-            // Games have to Initialize the system before using it
+            // Games have to Initialize the system before using it.
+            // The company name is OPTIONAL and you can simply pass null if you'd like to not include
+            // the company name as part of the save game location.
             GameSaveSystem.Initialize("Test Company", "Test Game");
 
             // Log the output folder where the saves will be
