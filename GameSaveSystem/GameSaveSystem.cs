@@ -33,12 +33,9 @@ namespace UnityToolbag
     /// </summary>
     public static class GameSaveSystem
     {
-        // If _useRollingBackups is true, this is how many save files are stored for each named file.
-        private const int MaxSavesPerSaveName = 5;
-
+        private static GameSaveSystemSettings _settings;
         private static bool _isInitialized;
         private static string _fileSaveLocation;
-        private static bool _useRollingBackups;
 
         /// <summary>
         /// Gets the folder where the game saves are stored;
@@ -53,21 +50,31 @@ namespace UnityToolbag
         }
 
         /// <summary>
-        /// Initializes the system with a given company and game.
+        /// Initializes the system with the provided settings.
         /// </summary>
-        /// <param name="companyName">The name of the company. Must be safe for use as a directory name.</param>
-        /// <param name="gameName">The name of the game. Must be safe for use as a directory name.</param>
-        /// <param name="useRollingBackups"><c>true</c> to use the rolling backup system, false to only store one version of a save file.</param>
-        public static void Initialize(string companyName, string gameName, bool useRollingBackups = true)
+        /// <param name="settings">The settings to configure the system with.</param>
+        public static void Initialize(GameSaveSystemSettings settings)
         {
-            // We only require the game name; the company can be omitted if that's preferred for creating the save location.
-            if (string.IsNullOrEmpty(gameName)) {
-                throw new ArgumentException("gameName must be a non-empty string!");
-            }
-
             if (_isInitialized) {
                 return;
             }
+
+            // Validate our input
+            if (settings == null) {
+                throw new ArgumentNullException("settings");
+            }
+            if (string.IsNullOrEmpty(settings.gameName)) {
+                throw new ArgumentException("The gameName in the settings must be a non-empty string");
+            }
+            if (settings.gameName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) != -1) {
+                throw new ArgumentException("The gameName in the settings contains illegal characters");
+            }
+            if (settings.useRollingBackups && settings.backupCount <= 0) {
+                throw new ArgumentException("useRollingBackups is true but backupCount isn't a positive value");
+            }
+
+            // Copy the settings locally so we can retain a new instance (so it can't be changed out from under us)
+            _settings = settings.Clone();
 
             // Find the base path for where we want to save game saves. Unity's persistentDataPath is generally unacceptable
             // to me. In Windows it uses some AppData folder, in OS X it (quite incorrectly) puts saves into a Cache folder,
@@ -90,18 +97,17 @@ namespace UnityToolbag
             // Do final cleanup on the path if we're on a desktop platform
 #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
             // Company name is optional so we check before appending it
-            if (!string.IsNullOrEmpty(companyName)) {
-                _fileSaveLocation = Path.Combine(_fileSaveLocation, companyName);
+            if (!string.IsNullOrEmpty(_settings.companyName)) {
+                _fileSaveLocation = Path.Combine(_fileSaveLocation, _settings.companyName);
             }
 
-            _fileSaveLocation = Path.Combine(_fileSaveLocation, gameName);
+            _fileSaveLocation = Path.Combine(_fileSaveLocation, _settings.gameName);
             _fileSaveLocation = Path.GetFullPath(_fileSaveLocation);
 #endif
 
             // Ensure the directory for saves exists.
             Directory.CreateDirectory(_fileSaveLocation);
 
-            _useRollingBackups = useRollingBackups;
             _isInitialized = true;
         }
 
@@ -139,13 +145,11 @@ namespace UnityToolbag
                 {
                     bool usedBackup = false;
 
-                    if (_useRollingBackups) {
+                    if (_settings.useRollingBackups) {
                         usedBackup = DoLoadWithBackups(save, name);
                     }
                     else {
-                        // For compatibility, we append 0 in case the game changes policy on using rolling backups.
-                        // This will ensure the game can go from using them to not, or vice versa.
-                        using (var stream = File.OpenRead(GetGameSavePath(name) + "0")) {
+                        using (var stream = File.OpenRead(GetGameSavePath(name))) {
                             save.Load(stream);
                         }
                     }
@@ -173,13 +177,11 @@ namespace UnityToolbag
 
             return new Future<bool>().Process(() =>
             {
-                if (_useRollingBackups) {
+                if (_settings.useRollingBackups) {
                     DoSaveWithBackups(save, name);
                 }
                 else {
-                    // For compatibility, we append 0 in case the game changes policy on using rolling backups.
-                    // This will ensure the game can go from using them to not, or vice versa.
-                    using (var stream = File.Create(GetGameSavePath(name) + "0")) {
+                    using (var stream = File.Create(GetGameSavePath(name))) {
                         save.Save(stream);
                     }
                 }
@@ -189,59 +191,76 @@ namespace UnityToolbag
 
         private static bool DoLoadWithBackups(IGameSave save, string name)
         {
-            // Get our base path just once
-            var basePath = GetGameSavePath(name);
+            string mainSavePath = GetGameSavePath(name);
 
-            // We go through and try loading all of the available game saves
+            // Try loading the regular save. Most times this should work fine.
+            try {
+                using (var stream = File.OpenRead(mainSavePath)) {
+                    save.Load(stream);
+                }
+
+                // If Load didn't throw, we're good to go and can return that we
+                // didn't need to load a backup save.
+                return false;
+            }
+            catch {
+                save.Reset();
+            }
+
+            // We go through and try loading all of the available backups
             var foundGoodSave = false;
-            var saveIndex = 0;
-            for (saveIndex = 0; !foundGoodSave && saveIndex < MaxSavesPerSaveName; saveIndex++) {
-                var savePath = basePath + saveIndex;
-
+            var backupIndex = 0;
+            for (backupIndex = 0; !foundGoodSave && backupIndex < _settings.backupCount; backupIndex++) {
                 // Try loading the file.
                 try {
-                    using (var stream = File.OpenRead(savePath)) {
+                    var path = GetBackupSavePath(name, backupIndex);
+                    using (var stream = File.OpenRead(path)) {
                         save.Load(stream);
                     }
+
                     foundGoodSave = true;
 
-                    // break so we don't increment the saveIndex again
+                    // break so we don't increment the backupIndex again
                     break;
                 }
-                catch (Exception e) {
-                    Debug.LogWarning(e.ToString());
+                catch {
                     save.Reset();
                 }
             }
 
-            // If used a backup file (or failed to load any file), delete the newer files and rename the others so everything's looking good
-            if (foundGoodSave && saveIndex > 0) {
-                // Delete all the newer saves
-                for (int i = 0; i < saveIndex; i++) {
-                    var path = basePath + i;
-                    try {
-                        if (File.Exists(path)) {
-                            File.Delete(path);
-                        }
-                    }
-                    catch (Exception e) {
-                        Debug.LogError(e.ToString());
-                    }
+            // At this point we either know that A) we loaded a backup successfully or B) all the saves are bad.
+            // So we need to clean up our saves to get rid of the bad ones.
+
+            // We know the main save failed so we can delete that
+            if (File.Exists(mainSavePath)) {
+                File.Delete(mainSavePath);
+            }
+
+            // Delete all backups newer than the one we were able to load. This might delete all of them if no saves were good.
+            for (int i = backupIndex - 1; i >= 0; i--) {
+                var path = GetBackupSavePath(name, i);
+                if (File.Exists(path)) {
+                    File.Delete(path);
                 }
+            }
 
-                // Shuffle down the remaining saves to fill in for us
-                for (int i = saveIndex; i < MaxSavesPerSaveName; i++) {
-                    try {
-                        var path1 = basePath + i;
-                        var path2 = basePath + (i - saveIndex);
+            if (foundGoodSave) {
+                // If we did find a save, make that save our main save
+                Debug.Log("Moving backup " + GetBackupSavePath(name, backupIndex) + " to " + mainSavePath);
+                File.Move(GetBackupSavePath(name, backupIndex), mainSavePath);
 
-                        if (File.Exists(path1) && File.Exists(path2)) {
-                            File.Delete(path1);
-                            File.Copy(path2, path1);
-                        }
+                // Move up the remaining backups
+                for (int i = backupIndex; i <= _settings.backupCount; i++) {
+                    var path1 = GetBackupSavePath(name, i);
+                    if (File.Exists(path1)) {
+                        File.Delete(path1);
                     }
-                    catch (Exception e) {
-                        Debug.LogError(e.ToString());
+
+                    if (i < _settings.backupCount) {
+                        var path2 = GetBackupSavePath(name, i + 1);
+                        if (File.Exists(path2)) {
+                            File.Move(path2, path1);
+                        }
                     }
                 }
             }
@@ -252,27 +271,40 @@ namespace UnityToolbag
                 throw new FileNotFoundException("No game save found with name '" + name + "'");
             }
 
-            // Return true if we used a backup file
-            return saveIndex > 0;
+            // Return true because if we got here we know we used a backup file
+            return true;
         }
 
         private static void DoSaveWithBackups(IGameSave save, string name)
         {
-            var basePath = GetGameSavePath(name);
-            var tempPath = basePath + ".temp";
-            var finalPath = basePath + "0";
+            var mainSavePath = GetGameSavePath(name);
+            var tempPath = mainSavePath + ".temp";
 
             // Start by attempting the save to a temp file
-            using (var stream = File.Create(tempPath)) {
-                save.Save(stream);
+            try {
+                using (var stream = File.Create(tempPath)) {
+                    save.Save(stream);
+                }
+            }
+            catch {
+                // Remove the temp file before leaving scope if saving threw an exception
+                try {
+                    if (File.Exists(tempPath)) {
+                        File.Delete(tempPath);
+                    }
+                }
+                catch { }
+
+                // Let the exception continue up
+                throw;
             }
 
-            // Saving succeeded so we need to move from the temp path to save0.
-            // First we need to move all existing save files down a slot.
-            for (int i = MaxSavesPerSaveName - 2; i >= 0; i--) {
-                var path = basePath + i;
+            // Saving succeeded so we need to move from the temp path to the main path.
+            // First up we shift down all the backup files
+            for (int i = _settings.backupCount - 2; i >= 0; i--) {
+                var path = GetBackupSavePath(name, i);
                 if (File.Exists(path)) {
-                    var nextPath = basePath + (i + 1);
+                    var nextPath = GetBackupSavePath(name, i + 1);
                     if (File.Exists(nextPath)) {
                         File.Delete(nextPath);
                     }
@@ -280,11 +312,13 @@ namespace UnityToolbag
                 }
             }
 
-            // Then we can just move the new file into place
-            if (File.Exists(finalPath)) {
-                File.Delete(finalPath);
+            // Then move the current main save into the first backup slot
+            if (File.Exists(mainSavePath)) {
+                File.Move(mainSavePath, GetBackupSavePath(name, 0));
             }
-            File.Move(tempPath, finalPath);
+
+            // Then we can just move the new file into place
+            File.Move(tempPath, mainSavePath);
         }
 
         private static void ThrowIfNotInitialized()
@@ -297,6 +331,11 @@ namespace UnityToolbag
         private static string GetGameSavePath(string name)
         {
             return Path.Combine(_fileSaveLocation, name + ".save");
+        }
+
+        private static string GetBackupSavePath(string name, int index)
+        {
+            return GetGameSavePath(name) + ".backup" + (index + 1);
         }
 
         // Static generic class for caching individual types of game saves.

@@ -37,9 +37,13 @@ namespace UnityToolbag
         void Start()
         {
             // Games have to Initialize the system before using it.
-            // The company name is OPTIONAL and you can simply pass null if you'd like to not include
-            // the company name as part of the save game location.
-            GameSaveSystem.Initialize("Test Company", "Test Game");
+            GameSaveSystem.Initialize(new GameSaveSystemSettings
+            {
+                companyName = "Test Company",
+                gameName = "Test Game",
+                useRollingBackups = true,
+                backupCount = 2
+            });
 
             // Log the output folder where the saves will be
             Debug.Log("Save location: " + GameSaveSystem.saveLocation, this);
@@ -127,7 +131,15 @@ namespace UnityToolbag
                 if (GUILayout.Button("Force Load")) {
                     DemoLoad(true);
                 }
+                if (GUILayout.Button("Load and Fail")) {
+                    DemoGameSave.FailNextLoad = true;
+                    DemoLoad(true);
+                }
                 if (GUILayout.Button("Save")) {
+                    DemoSave();
+                }
+                if (GUILayout.Button("Save and Fail")) {
+                    DemoGameSave.FailNextSave = true;
                     DemoSave();
                 }
             }
