@@ -5,7 +5,7 @@ This is a game save management system I wrote for our games. This system solves 
 
 1. All saving and loading occurs off the main thread using futures. This ensures games are responsive and don't lock up during file operations.
 2. File saves are cached so trying to load a save that is in the cache doesn't hit the disk (unless you pass in an argument to force it to).
-3. The system stores backups of game saves (4 backups + the good save) for cases where loading fails. This provides a nice fallback system in cases where game saves become corrupt.
+3. The system can optionally rolling backups of game saves (4 backups + the good save) for cases where loading fails. This provides a nice fallback system in cases where game saves become corrupt. You can pass in `false` for the third parameter of `Initialize` to disable this feature.
 4. Unity's `Application.persistentDataPath` is almost always not where game saves should go. This game save system uses much nicer paths for game saves.
 
 This system relies on both the `IFuture<T>` interface and `Future<T>` class from the [Future](https://github.com/nickgravelyn/UnityToolbag/tree/master/Future) library, so make sure you include them in your project if you want to use this sytem.
@@ -14,7 +14,7 @@ Usage
 ---
 
 1. Create one or more classes that implement `IGameSave`.
-2. At the start of your game, call `GameSaveSystem.Initialize(string companyName, string gameName)` to provide the system with your company and game name, which are used to construct the game save directory (which can be accessed via the `GameSaveSystem.saveLocation` property). The company name here is OPTIONAL and you may safely pass in `null` if you'd prefer to not include the company name in the save location path.
+2. At the start of your game, call `GameSaveSystem.Initialize(string companyName, string gameName, bool useRollingBackups = true)` to provide the system with your company and game name, which are used to construct the game save directory (which can be accessed via the `GameSaveSystem.saveLocation` property). The company name here is OPTIONAL and you may safely pass in `null` if you'd prefer to not include the company name in the save location path.
 3. Use `GameSaveSystem.Load` to load saves and `GameSaveSystem.Save` to save them.
 
 All of the code files are heavily commented and should be referenced for more documentation. Additionally there is a Demo folder that has an extremely minimal sample showing the usage of the system.

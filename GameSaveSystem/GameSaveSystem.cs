@@ -33,14 +33,12 @@ namespace UnityToolbag
     /// </summary>
     public static class GameSaveSystem
     {
-        // We're actually going to use a system of "rolling" saves where will be saving .save0, .save1, etc where
-        // save0 is always the latest save file and the others are backups. The point of this is for data integrity
-        // and failure cases. If we can't load save0, we load save1. If that fails, we load save2 and so on. Basically
-        // if one file fails to load, the player isn't totally screwed.
-        private const int MaxSaveFilesPerUser = 5;
+        // If _useRollingBackups is true, this is how many save files are stored for each named file.
+        private const int MaxSavesPerSaveName = 5;
 
         private static bool _isInitialized;
         private static string _fileSaveLocation;
+        private static bool _useRollingBackups;
 
         /// <summary>
         /// Gets the folder where the game saves are stored;
@@ -59,7 +57,8 @@ namespace UnityToolbag
         /// </summary>
         /// <param name="companyName">The name of the company. Must be safe for use as a directory name.</param>
         /// <param name="gameName">The name of the game. Must be safe for use as a directory name.</param>
-        public static void Initialize(string companyName, string gameName)
+        /// <param name="useRollingBackups"><c>true</c> to use the rolling backup system, false to only store one version of a save file.</param>
+        public static void Initialize(string companyName, string gameName, bool useRollingBackups = true)
         {
             // We only require the game name; the company can be omitted if that's preferred for creating the save location.
             if (string.IsNullOrEmpty(gameName)) {
@@ -102,6 +101,7 @@ namespace UnityToolbag
             // Ensure the directory for saves exists.
             Directory.CreateDirectory(_fileSaveLocation);
 
+            _useRollingBackups = useRollingBackups;
             _isInitialized = true;
         }
 
@@ -137,7 +137,19 @@ namespace UnityToolbag
 
                 future.Process(() =>
                 {
-                    bool usedBackup = DoLoad(save, name);
+                    bool usedBackup = false;
+
+                    if (_useRollingBackups) {
+                        usedBackup = DoLoadWithBackups(save, name);
+                    }
+                    else {
+                        // For compatibility, we append 0 in case the game changes policy on using rolling backups.
+                        // This will ensure the game can go from using them to not, or vice versa.
+                        using (var stream = File.OpenRead(GetGameSavePath(name) + "0")) {
+                            save.Load(stream);
+                        }
+                    }
+
                     return new GameSaveLoadResult<TGameSave>(save, false, usedBackup);
                 });
             }
@@ -161,25 +173,29 @@ namespace UnityToolbag
 
             return new Future<bool>().Process(() =>
             {
-                DoSave(save, name);
+                if (_useRollingBackups) {
+                    DoSaveWithBackups(save, name);
+                }
+                else {
+                    // For compatibility, we append 0 in case the game changes policy on using rolling backups.
+                    // This will ensure the game can go from using them to not, or vice versa.
+                    using (var stream = File.Create(GetGameSavePath(name) + "0")) {
+                        save.Save(stream);
+                    }
+                }
                 return true;
             });
         }
 
-        private static bool DoLoad(IGameSave save, string name)
+        private static bool DoLoadWithBackups(IGameSave save, string name)
         {
             // Get our base path just once
             var basePath = GetGameSavePath(name);
 
-            // If there's no 0 index save, then this save doesn't exist
-            if (!File.Exists(basePath + "0")) {
-                throw new FileNotFoundException("No game save found with name '" + name + "'");
-            }
-
             // We go through and try loading all of the available game saves
             var foundGoodSave = false;
             var saveIndex = 0;
-            for (saveIndex = 0; !foundGoodSave && saveIndex < MaxSaveFilesPerUser; saveIndex++) {
+            for (saveIndex = 0; !foundGoodSave && saveIndex < MaxSavesPerSaveName; saveIndex++) {
                 var savePath = basePath + saveIndex;
 
                 // Try loading the file.
@@ -214,7 +230,7 @@ namespace UnityToolbag
                 }
 
                 // Shuffle down the remaining saves to fill in for us
-                for (int i = saveIndex; i < MaxSaveFilesPerUser; i++) {
+                for (int i = saveIndex; i < MaxSavesPerSaveName; i++) {
                     try {
                         var path1 = basePath + i;
                         var path2 = basePath + (i - saveIndex);
@@ -230,16 +246,17 @@ namespace UnityToolbag
                 }
             }
 
-            // If we didn't find any good saves, just reset the game save so it's nice and clean
+            // If we didn't find any good saves, throw an exception so the future will receive the error and
+            // games can choose how to handle it.
             if (!foundGoodSave) {
-                save.Reset();
+                throw new FileNotFoundException("No game save found with name '" + name + "'");
             }
 
             // Return true if we used a backup file
             return saveIndex > 0;
         }
 
-        private static void DoSave(IGameSave save, string name)
+        private static void DoSaveWithBackups(IGameSave save, string name)
         {
             var basePath = GetGameSavePath(name);
             var tempPath = basePath + ".temp";
@@ -252,7 +269,7 @@ namespace UnityToolbag
 
             // Saving succeeded so we need to move from the temp path to save0.
             // First we need to move all existing save files down a slot.
-            for (int i = MaxSaveFilesPerUser - 2; i >= 0; i--) {
+            for (int i = MaxSavesPerSaveName - 2; i >= 0; i--) {
                 var path = basePath + i;
                 if (File.Exists(path)) {
                     var nextPath = basePath + (i + 1);
