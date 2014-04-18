@@ -25,10 +25,13 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-namespace UnityToolbag {
-    public static class UnityConstantsGenerator {
+namespace UnityToolbag
+{
+    public static class UnityConstantsGenerator
+    {
         [MenuItem("Edit/Generate UnityConstants.cs")]
-        public static void Generate() {
+        public static void Generate()
+        {
             // Try to find an existing file in the project called "UnityConstants.cs"
             string filePath = string.Empty;
             foreach (var file in Directory.GetFiles(Application.dataPath, "*.cs", SearchOption.AllDirectories)) {
@@ -91,7 +94,10 @@ namespace UnityToolbag {
                 // Write out scenes
                 writer.WriteLine("    public static class Scenes {");
                 for (int i = 0; i < EditorBuildSettings.scenes.Length; i++) {
-                    writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(Path.GetFileNameWithoutExtension(EditorBuildSettings.scenes[i].path)), i);
+                    writer.WriteLine(
+                        "        public const int {0} = {1};",
+                        MakeSafeForCode(Path.GetFileNameWithoutExtension(EditorBuildSettings.scenes[i].path)),
+                        i);
                 }
                 writer.WriteLine("    }");
                 writer.WriteLine("}");
@@ -104,7 +110,8 @@ namespace UnityToolbag {
 
         // Takes in a string and makes it safe for use a variable name in C#. This just means stripping out spaces and prefixing with a "_" character
         // if the string starts with a number. It's not the most robust, but should handle most cases just fine.
-        private static string MakeSafeForCode(string str) {
+        private static string MakeSafeForCode(string str)
+        {
             str = str.Replace(" ", "");
             if (char.IsDigit(str[0])) {
                 str = "_" + str;

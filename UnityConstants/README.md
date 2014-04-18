@@ -12,8 +12,10 @@ You can run this tool by choosing `Generate UnityConstants.cs` from the `Edit` m
 
 This is an example of what you'll see in `UnityConstants.cs`:
 
-    namespace UnityConstants {
-        public static class Tags {
+    namespace UnityConstants
+    {
+        public static class Tags
+        {
             public const string Untagged = "Untagged";
             public const string Respawn = "Respawn";
             public const string Finish = "Finish";
@@ -26,14 +28,16 @@ This is an example of what you'll see in `UnityConstants.cs`:
             public const string _3Testing = "3 Testing";
         }
 
-        public static class SortingLayers {
+        public static class SortingLayers
+        {
             public const int Default = 0;
             public const int Second = 1;
             public const int Another = 2;
             public const int NewLayer3 = 3;
         }
 
-        public static class Layers {
+        public static class Layers
+        {
             public const int Default = 0;
             public const int TransparentFX = 1;
             public const int IgnoreRaycast = 2;
@@ -42,9 +46,11 @@ This is an example of what you'll see in `UnityConstants.cs`:
             public const int Layer12 = 12;
         }
 
-        public static class Scenes {
+        public static class Scenes
+        {
             public const int TestScene = 0;
             public const int TestScene2 = 1;
         }
     }
 
+UnityConstants does depend on the `SortingLayerHelper` class from the [SortingLayer](https://github.com/nickgravelyn/UnityToolbag/tree/master/SortingLayer) feature in order to get the names and IDs of the sorting layers.

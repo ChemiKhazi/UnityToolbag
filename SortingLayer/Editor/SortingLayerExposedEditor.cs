@@ -25,10 +25,13 @@ using System;
 using UnityEngine;
 using UnityEditor;
 
-namespace UnityToolbag {
+namespace UnityToolbag
+{
     [CustomEditor(typeof(SortingLayerExposed))]
-    public class SortingLayerExposedEditor : Editor {
-        public override void OnInspectorGUI() {
+    public class SortingLayerExposedEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
             // Get the renderer from the target object
             var renderer = (target as SortingLayerExposed).gameObject.renderer;
 

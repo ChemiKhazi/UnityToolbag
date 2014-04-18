@@ -8,4 +8,4 @@ Usage
 
 Simply clone the repository into the 'Assets' folder of a Unity project and you're good to go. If you're already using Git, you can use a submodule to check out into Assets without the Toolbag getting added to your repository.
 
-Alternatively you can just cherry pick the features you want and copy only those folders into your project.
+Alternatively you can just cherry pick the features you want and copy only those folders into your project. Be careful, though, as some of the features may depend on others. See the individual feature README files to find out.

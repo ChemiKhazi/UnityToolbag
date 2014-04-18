@@ -37,93 +37,81 @@ namespace UnityToolbag
         private const string EditorPrefsKey = "UnityToolbag.ImmediateWindow.LastText";
 
         // Positions for the two scroll views
-        private Vector2 scrollPos;
-        private Vector2 errorScrollPos;
+        private Vector2 _scrollPos;
+        private Vector2 _errorScrollPos;
 
         // The script text string
-        private string scriptText = string.Empty;
+        private string _scriptText = string.Empty;
 
         // Stored away compiler errors (if any) and the compiled method
-        private CompilerErrorCollection compilerErrors = null;
-        private MethodInfo compiledMethod = null;
+        private CompilerErrorCollection _compilerErrors = null;
+        private MethodInfo _compiledMethod = null;
 
         void OnEnable()
         {
-            if (EditorPrefs.HasKey(EditorPrefsKey))
-            {
-                scriptText = EditorPrefs.GetString(EditorPrefsKey);
+            if (EditorPrefs.HasKey(EditorPrefsKey)) {
+                _scriptText = EditorPrefs.GetString(EditorPrefsKey);
             }
         }
 
         void OnGUI()
         {
             // Make a scroll view for the text area
-            scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+            _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 
             // Place a text area in the scroll view
-            string newScriptText = EditorGUILayout.TextArea(scriptText, GUILayout.ExpandHeight(true));
+            string newScriptText = EditorGUILayout.TextArea(_scriptText, GUILayout.ExpandHeight(true));
 
             // If the script updated save the script and remove the compiled method as it's no longer valid
-            if (scriptText != newScriptText)
-            {
-                scriptText = newScriptText;
-                EditorPrefs.SetString(EditorPrefsKey, scriptText);
-                compiledMethod = null;
+            if (_scriptText != newScriptText) {
+                _scriptText = newScriptText;
+                EditorPrefs.SetString(EditorPrefsKey, _scriptText);
+                _compiledMethod = null;
             }
 
             EditorGUILayout.EndScrollView();
 
             // Setup the compile/run button
-            if (GUILayout.Button(compiledMethod == null ? "Compile + Run" : "Run"))
-            {
+            if (GUILayout.Button(_compiledMethod == null ? "Compile + Run" : "Run")) {
                 // If the method is already compiled or if we successfully compile the script text, invoke the method
-                if (compiledMethod != null || CodeCompiler.CompileCSharpImmediateSnippet(scriptText, out compilerErrors, out compiledMethod))
-                {
-                    compiledMethod.Invoke(null, null);
+                if (_compiledMethod != null || CodeCompiler.CompileCSharpImmediateSnippet(_scriptText, out _compilerErrors, out _compiledMethod)) {
+                    _compiledMethod.Invoke(null, null);
                 }
             }
 
             // If we have any errors, we display them in their own scroll view
-            if (compilerErrors != null && compilerErrors.Count > 0)
-            {
+            if (_compilerErrors != null && _compilerErrors.Count > 0) {
                 // Build up one string for errors and one for warnings
                 StringBuilder errorString = new StringBuilder();
                 StringBuilder warningString = new StringBuilder();
 
-                foreach (CompilerError e in compilerErrors)
-                {
-                    if (e.IsWarning)
-                    {
+                foreach (CompilerError e in _compilerErrors) {
+                    if (e.IsWarning) {
                         warningString.AppendFormat("Warning on line {0}: {1}\n", e.Line, e.ErrorText);
                     }
-                    else
-                    {
+                    else {
                         errorString.AppendFormat("Error on line {0}: {1}\n", e.Line, e.ErrorText);
                     }
                 }
 
                 // Remove trailing new lines from both strings
-                if (errorString.Length > 0)
-                {
+                if (errorString.Length > 0) {
                     errorString.Length -= 2;
                 }
 
-                if (warningString.Length > 0)
-                {
+                if (warningString.Length > 0) {
                     warningString.Length -= 2;
                 }
 
                 // Make a simple UI layout with a scroll view and some labels
                 GUILayout.Label("Errors and warnings:");
-                errorScrollPos = EditorGUILayout.BeginScrollView(errorScrollPos, GUILayout.MaxHeight(100));
+                _errorScrollPos = EditorGUILayout.BeginScrollView(_errorScrollPos, GUILayout.MaxHeight(100));
 
-                if (errorString.Length > 0)
-                {
+                if (errorString.Length > 0) {
                     GUILayout.Label(errorString.ToString());
                 }
 
-                if (warningString.Length > 0)
-                {
+                if (warningString.Length > 0) {
                     GUILayout.Label(warningString.ToString());
                 }
 

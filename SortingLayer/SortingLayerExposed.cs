@@ -27,5 +27,7 @@ namespace UnityToolbag
 {
     // Component does nothing; editor script does all the magic
     [AddComponentMenu("UnityToolbag/SortingLayerExposed")]
-    public class SortingLayerExposed : MonoBehaviour { }
+    public class SortingLayerExposed : MonoBehaviour
+    {
+    }
 }

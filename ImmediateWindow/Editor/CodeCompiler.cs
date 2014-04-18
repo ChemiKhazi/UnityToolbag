@@ -66,8 +66,7 @@ public static class CodeSnippetWrapper
 
             // Compile the full script
             Assembly assembly;
-            if (CompileCSharpScript(string.Format(methodScriptWrapper, methodText), out errors, out assembly))
-            {
+            if (CompileCSharpScript(string.Format(methodScriptWrapper, methodText), out errors, out assembly)) {
                 // If compilation succeeded, we can use reflection to get the method and pass that back to the user
                 methodIfSucceeded = assembly.GetType("CodeSnippetWrapper").GetMethod("PerformAction", BindingFlags.Static | BindingFlags.Public);
                 return true;
@@ -108,10 +107,8 @@ public static class CodeSnippetWrapper
             errors = result.Errors;
 
             // See if any errors are actually errors. if so return false
-            foreach (CompilerError e in errors)
-            {
-                if (!e.IsWarning)
-                {
+            foreach (CompilerError e in errors) {
+                if (!e.IsWarning) {
                     return false;
                 }
             }

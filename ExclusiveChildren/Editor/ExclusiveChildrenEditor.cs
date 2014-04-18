@@ -27,10 +27,13 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace UnityToolbag {
+namespace UnityToolbag
+{
     [CustomEditor(typeof(ExclusiveChildren))]
-    public class ExclusiveChildrenEditor : Editor {
-        public override void OnInspectorGUI() {
+    public class ExclusiveChildrenEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
             // Get the transform of the object and use that to get all children in alphabetical order
             var transform = (target as ExclusiveChildren).transform;
             var children = (transform as IEnumerable).Cast<Transform>().OrderBy(t => t.gameObject.name).ToArray();

@@ -57,13 +57,11 @@ namespace UnityToolbag
         {
             get
             {
-                if (_currentAnimation == null)
-                {
+                if (_currentAnimation == null) {
                     return true;
                 }
 
-                if (_currentAnimation.loop)
-                {
+                if (_currentAnimation.loop) {
                     return false;
                 }
 
@@ -81,47 +79,38 @@ namespace UnityToolbag
         {
             SpriteFrameAnimation newAnimation = null;
 
-            foreach (var anim in _animations)
-            {
-                if (anim.name == name)
-                {
+            foreach (var anim in _animations){
+                if (anim.name == name) {
                     newAnimation = anim;
                     break;
                 }
             }
 
-            if (newAnimation == null)
-            {
+            if (newAnimation == null) {
                 _currentAnimation = null;
                 return;
             }
 
-            switch (resetOption)
-            {
-                case SpriteFrameAnimationResetOption.ResetIfNew:
-                {
-                    if (newAnimation != _currentAnimation)
-                    {
+            switch (resetOption) {
+                case SpriteFrameAnimationResetOption.ResetIfNew: {
+                    if (newAnimation != _currentAnimation) {
                         _frame = 0;
                         _timer = 0;
                     }
                     break;
                 }
-                case SpriteFrameAnimationResetOption.ResetAlways:
-                {
+                case SpriteFrameAnimationResetOption.ResetAlways: {
                     _frame = 0;
                     _timer = 0;
                     break;
                 }
-                default:
-                {
+                default: {
                     break;
                 }
             }
 
             _currentAnimation = newAnimation;
-            if (_currentAnimation != null)
-            {
+            if (_currentAnimation != null) {
                 UpdateWithFrameData();
             }
         }
@@ -133,8 +122,7 @@ namespace UnityToolbag
 
         public void Stop(int stopOnIndex)
         {
-            if (_currentAnimation != null)
-            {
+            if (_currentAnimation != null) {
                 _frame = stopOnIndex;
                 UpdateWithFrameData();
                 _currentAnimation = null;
@@ -148,33 +136,26 @@ namespace UnityToolbag
 
         void Start()
         {
-            if (_playOnStart)
-            {
+            if (_playOnStart) {
                 Play(_startAnimation);
             }
         }
 
         void Update()
         {
-            if (_currentAnimation != null)
-            {
-                if (!isAnimationComplete)
-                {
+            if (_currentAnimation != null) {
+                if (!isAnimationComplete) {
                     _timer += Time.deltaTime * 1000f;
                 }
 
-                if (_timer >= _currentAnimation.frameDuration)
-                {
+                if (_timer >= _currentAnimation.frameDuration) {
                     _timer -= _currentAnimation.frameDuration;
 
-                    if (!isAnimationComplete || _currentAnimation.loop)
-                    {
-                        if (_currentAnimation.loop)
-                        {
+                    if (!isAnimationComplete || _currentAnimation.loop) {
+                        if (_currentAnimation.loop) {
                             _frame = (_frame + 1) % _currentAnimation.frames.Length;
                         }
-                        else if (_frame < _currentAnimation.frames.Length)
-                        {
+                        else if (_frame < _currentAnimation.frames.Length) {
                             _frame++;
                         }
 

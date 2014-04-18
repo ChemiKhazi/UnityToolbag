@@ -23,8 +23,11 @@
 
 using UnityEngine;
 
-namespace UnityToolbag {
+namespace UnityToolbag
+{
     // Component does nothing; editor script does all the magic
     [AddComponentMenu("UnityToolbag/ExclusiveChildren")]
-    public class ExclusiveChildren : MonoBehaviour { }
+    public class ExclusiveChildren : MonoBehaviour
+    {
+    }
 }
