@@ -34,8 +34,12 @@ namespace UnityToolbag
     public static class GameSaveSystem
     {
         private static GameSaveSystemSettings _settings;
-        private static bool _isInitialized;
         private static string _fileSaveLocation;
+
+        /// <summary>
+        /// Gets a value indicating whether or not the GameSaveSystem has been initialized.
+        /// </summary>
+        public static bool isInitialized { get; private set; }
 
         /// <summary>
         /// Gets the folder where the game saves are stored;
@@ -55,8 +59,8 @@ namespace UnityToolbag
         /// <param name="settings">The settings to configure the system with.</param>
         public static void Initialize(GameSaveSystemSettings settings)
         {
-            if (_isInitialized) {
-                return;
+            if (isInitialized) {
+                throw new InvalidOperationException("GameSaveSystem is already initialized. Cannot initialize again!");
             }
 
             // Validate our input
@@ -108,7 +112,7 @@ namespace UnityToolbag
             // Ensure the directory for saves exists.
             Directory.CreateDirectory(_fileSaveLocation);
 
-            _isInitialized = true;
+            isInitialized = true;
         }
 
         /// <summary>
@@ -323,7 +327,7 @@ namespace UnityToolbag
 
         private static void ThrowIfNotInitialized()
         {
-            if (!_isInitialized) {
+            if (!isInitialized) {
                 throw new InvalidOperationException("You must call Initialize first!");
             }
         }
