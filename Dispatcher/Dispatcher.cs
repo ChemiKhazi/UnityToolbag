@@ -31,6 +31,7 @@ namespace UnityToolbag
     /// <summary>
     /// A system for dispatching code to execute on the main thread.
     /// </summary>
+    [AddComponentMenu("UnityToolbag/Dispatcher")]
     public class Dispatcher : MonoBehaviour
     {
         private static Dispatcher _instance;
