@@ -26,7 +26,7 @@
 namespace UnityToolbag
 {
     [ExecuteInEditMode]
-    [AddComponentMenu("UnityToolbag/DrawTitleSafeArea")]
+    [AddComponentMenu("UnityToolbag/Draw Title Safe Area")]
     public class DrawTitleSafeArea : MonoBehaviour
     {
     #if UNITY_EDITOR

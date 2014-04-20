@@ -33,7 +33,7 @@ namespace UnityToolbag
         ResetAlways
     }
 
-    [AddComponentMenu("UnityToolbag/SpriteFrameAnimator")]
+    [AddComponentMenu("UnityToolbag/Sprite Frame Animator")]
     public class SpriteFrameAnimator : MonoBehaviour
     {
         private SpriteFrameAnimation _currentAnimation;
