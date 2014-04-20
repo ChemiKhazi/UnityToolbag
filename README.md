@@ -1,7 +1,25 @@
 UnityToolbag
 ===
 
-This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder will get its own README to explain the usage. All scripts are being written with the latest Unity 4.3 and may or may not work in earlier versions.
+This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder has its own README to explain the usage in more depth than here. All scripts are being written with the latest Unity 4.3 and may or may not work in earlier versions.
+
+
+Features
+---
+
+- [Dispatcher](Dispatcher) - Provides a mechanism for invoking code on the main thread from background threads.
+- [DrawTitleSafeArea](DrawTitleSafeArea) - Simple component you add to a camera to render the title safe area.
+- [ExclusiveChildren](ExclusiveChildren) - Helper script for managing objects in a hierarchy that represent mutually exclusive options (like a set of menu screens)
+- [Future](Future) - Simple implementation of the [future](http://en.wikipedia.org/wiki/Futures_and_promises) concept.
+- [GameSaveSystem](GameSaveSystem) - A helper system for game saves to provide automatic backups and background thread processing along with better game save file paths.
+- [ImmediateWindow](ImmediateWindow) - An editor window that allows executing manual C# snippets.
+- [ScriptableObjectUtility](ScriptableObjectUtility) - An editor class to help with creating `ScriptableObject` subclasses.
+- [SimpleSpriteAnimation](SimpleSpriteAnimation) - A very basic system for a simpler frame based animation for Unity's 2D system.
+- [SnapToSurface](SnapToSurface) - Editor tools to assist in positioning objects.
+- [SortingLayer](SortingLayer) - Tools for working with Unity's new sorting layers.
+- [TimeScaleIndependentUpdate](TimeScaleIndependentUpdate) - Components to make it easier to continue animations when `Time.timeScale` is set to 0 (i.e. paused).
+- [UnityConstants](UnityConstants) - Tool for generating a C# script containing the names and values for tags, layers, sorting layers, and scenes.
+- [UnityLock](UnityLock) - Basic tool for locking objects in the scene to minimize accidental edits while working.
 
 
 Usage
