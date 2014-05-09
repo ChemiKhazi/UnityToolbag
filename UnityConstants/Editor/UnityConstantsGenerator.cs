@@ -86,10 +86,19 @@ namespace UnityToolbag
                 // Write out layers
                 writer.WriteLine("    public static class Layers");
                 writer.WriteLine("    {");
+                writer.WriteLine("        // Regular layer indices for assigning layers dynamically in code");
                 for (int i = 0; i < 32; i++) {
                     string layer = UnityEditorInternal.InternalEditorUtility.GetLayerName(i);
                     if (!string.IsNullOrEmpty(layer)) {
                         writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(layer), i);
+                    }
+                }
+                writer.WriteLine();
+                writer.WriteLine("        // Pre-configured layer masks for use with raycasts or other such queries");
+                for (int i = 0; i < 32; i++) {
+                    string layer = UnityEditorInternal.InternalEditorUtility.GetLayerName(i);
+                    if (!string.IsNullOrEmpty(layer)) {
+                        writer.WriteLine("        public const int {0}Mask = 1 << {0};", MakeSafeForCode(layer));
                     }
                 }
                 writer.WriteLine("    }");
