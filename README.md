@@ -7,6 +7,7 @@ This repo is a host for any little Unity scripts I write that are simple and eas
 Features
 ---
 
+- [CacheBehaviour](CacheBehaviour) - A drop-in replacement for `MonoBehaviour` as a script base class that provides caching of all standard properties.
 - [Dispatcher](Dispatcher) - Provides a mechanism for invoking code on the main thread from background threads.
 - [DrawTitleSafeArea](DrawTitleSafeArea) - Simple component you add to a camera to render the title safe area.
 - [ExclusiveChildren](ExclusiveChildren) - Helper script for managing objects in a hierarchy that represent mutually exclusive options (like a set of menu screens)
