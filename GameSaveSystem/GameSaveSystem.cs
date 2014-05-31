@@ -251,7 +251,7 @@ namespace UnityToolbag
             if (foundGoodSave) {
                 // If we did find a save, make that save our main save
                 Debug.Log("Moving backup " + GetBackupSavePath(name, backupIndex) + " to " + mainSavePath);
-                File.Move(GetBackupSavePath(name, backupIndex), mainSavePath);
+                MoveFile(GetBackupSavePath(name, backupIndex), mainSavePath);
 
                 // Move up the remaining backups
                 for (int i = backupIndex; i <= _settings.backupCount; i++) {
@@ -263,7 +263,7 @@ namespace UnityToolbag
                     if (i < _settings.backupCount) {
                         var path2 = GetBackupSavePath(name, i + 1);
                         if (File.Exists(path2)) {
-                            File.Move(path2, path1);
+                            MoveFile(path2, path1);
                         }
                     }
                 }
@@ -277,6 +277,16 @@ namespace UnityToolbag
 
             // Return true because if we got here we know we used a backup file
             return true;
+        }
+
+        private static void MoveFile(string src, string dst)
+        {
+#if UNITY_WEBPLAYER
+            File.Copy(src, dst);
+            File.Delete(src);
+#else
+            File.Move(src, dst);
+#endif
         }
 
         private static void DoSaveWithBackups(IGameSave save, string name)
@@ -312,17 +322,17 @@ namespace UnityToolbag
                     if (File.Exists(nextPath)) {
                         File.Delete(nextPath);
                     }
-                    File.Move(path, nextPath);
+                    MoveFile(path, nextPath);
                 }
             }
 
             // Then move the current main save into the first backup slot
             if (File.Exists(mainSavePath)) {
-                File.Move(mainSavePath, GetBackupSavePath(name, 0));
+                MoveFile(mainSavePath, GetBackupSavePath(name, 0));
             }
 
             // Then we can just move the new file into place
-            File.Move(tempPath, mainSavePath);
+            MoveFile(tempPath, mainSavePath);
         }
 
         private static void ThrowIfNotInitialized()
