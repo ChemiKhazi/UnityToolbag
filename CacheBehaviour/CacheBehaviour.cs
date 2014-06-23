@@ -23,16 +23,9 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace UnityToolbag
 {
-    // A subclass for behaviours that overrides all existing properties with cached versions.
-    // This will generally increase performance because the standard properties always call GetComponent,
-    // which means another method call and some kind of hash/dictionary lookup.
-    // This is also handy because, supposedly, Unity 5 is removing all of the standard properties from
-    // MonoBehaviour, so this is a nice reimplementation that should continue to work in Unity 5.
     public abstract class CacheBehaviour : MonoBehaviour
     {
         private Animation _animation;
