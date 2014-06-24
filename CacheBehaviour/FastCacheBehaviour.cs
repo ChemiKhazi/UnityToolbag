@@ -28,54 +28,71 @@ namespace UnityToolbag
 {
     public abstract class FastCacheBehaviour : MonoBehaviour
     {
+        [HideInInspector]
         private Animation _animation;
         public new Animation animation { get { return ReferenceEquals(_animation, null) ? (_animation = GetComponent<Animation>()) : _animation; } }
 
+        [HideInInspector]
         private AudioSource _audio;
         public new AudioSource audio { get { return ReferenceEquals(_audio, null) ? (_audio = GetComponent<AudioSource>()) : _audio; } }
 
+        [HideInInspector]
         private Camera _camera;
         public new Camera camera { get { return ReferenceEquals(_camera, null) ? (_camera = GetComponent<Camera>()) : _camera; } }
 
+        [HideInInspector]
         private Collider _collider;
         public new Collider collider { get { return ReferenceEquals(_collider, null) ? (_collider = GetComponent<Collider>()) : _collider; } }
 
+        [HideInInspector]
         private Collider2D _collider2D;
         public new Collider2D collider2D { get { return ReferenceEquals(_collider2D, null) ? (_collider2D = GetComponent<Collider2D>()) : _collider2D; } }
 
+        [HideInInspector]
         private ConstantForce _constantForce;
         public new ConstantForce constantForce { get { return ReferenceEquals(_constantForce, null) ? (_constantForce = GetComponent<ConstantForce>()) : _constantForce; } }
 
+        [HideInInspector]
         private GUIText _guiText;
         public new GUIText guiText { get { return ReferenceEquals(_guiText, null) ? (_guiText = GetComponent<GUIText>()) : _guiText; } }
 
+        [HideInInspector]
         private GUITexture _guiTexture;
         public new GUITexture guiTexture { get { return ReferenceEquals(_guiTexture, null) ? (_guiTexture = GetComponent<GUITexture>()) : _guiTexture; } }
 
+        [HideInInspector]
         private HingeJoint _hingeJoint;
         public new HingeJoint hingeJoint { get { return ReferenceEquals(_hingeJoint, null) ? (_hingeJoint = GetComponent<HingeJoint>()) : _hingeJoint; } }
 
+        [HideInInspector]
         private Light _light;
         public new Light light { get { return ReferenceEquals(_light, null) ? (_light = GetComponent<Light>()) : _light; } }
 
+        [HideInInspector]
         private NetworkView _networkView;
         public new NetworkView networkView { get { return ReferenceEquals(_networkView, null) ? (_networkView = GetComponent<NetworkView>()) : _networkView; } }
 
+        [HideInInspector]
         private ParticleEmitter _particleEmitter;
         public new ParticleEmitter particleEmitter { get { return ReferenceEquals(_particleEmitter, null) ? (_particleEmitter = GetComponent<ParticleEmitter>()) : _particleEmitter; } }
 
+        [HideInInspector]
         private ParticleSystem _particleSystem;
         public new ParticleSystem particleSystem { get { return ReferenceEquals(_particleSystem, null) ? (_particleSystem = GetComponent<ParticleSystem>()) : _particleSystem; } }
 
+        [HideInInspector]
         private Renderer _renderer;
         public new Renderer renderer { get { return ReferenceEquals(_renderer, null) ? (_renderer = GetComponent<Renderer>()) : _renderer; } }
 
+        [HideInInspector]
         private Rigidbody _rigidbody;
         public new Rigidbody rigidbody { get { return ReferenceEquals(_rigidbody, null) ? (_rigidbody = GetComponent<Rigidbody>()) : _rigidbody; } }
 
+        [HideInInspector]
         private Rigidbody2D _rigidbody2D;
         public new Rigidbody2D rigidbody2D { get { return ReferenceEquals(_rigidbody2D, null) ? (_rigidbody2D = GetComponent<Rigidbody2D>()) : _rigidbody2D; } }
 
+        [HideInInspector]
         private Transform _transform;
         public new Transform transform { get { return ReferenceEquals(_transform, null) ? (_transform = GetComponent<Transform>()) : _transform; } }
     }
