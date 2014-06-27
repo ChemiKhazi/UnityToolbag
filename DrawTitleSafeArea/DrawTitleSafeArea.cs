@@ -39,14 +39,16 @@ namespace UnityToolbag
     #if UNITY_EDITOR
         void Start()
         {
-            if (!this.camera) {
+            if (!this.camera)
+            {
                 this.camera = base.camera;
             }
         }
 
         void OnDestroy()
         {
-            if (_blank) {
+            if (_blank)
+            {
                 DestroyImmediate(_blank);
                 _blank = null;
             }
@@ -54,11 +56,13 @@ namespace UnityToolbag
 
         void OnGUI()
         {
-            if (!this.camera) {
+            if (!this.camera)
+            {
                 return;
             }
 
-            if (!_blank) {
+            if (!_blank)
+            {
                 _blank = new Texture2D(1, 1);
                 _blank.SetPixel(0, 0, Color.white);
                 _blank.hideFlags = HideFlags.HideAndDontSave;
