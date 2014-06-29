@@ -32,7 +32,7 @@ namespace UnityToolbag
     /// </summary>
     public abstract class CacheBehaviour : MonoBehaviour
     {
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private Animation _animation;
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace UnityToolbag
         /// </summary>
         public new Animation animation { get { return _animation ? _animation : (_animation = GetComponent<Animation>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private AudioSource _audio;
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace UnityToolbag
         /// </summary>
         public new AudioSource audio { get { return _audio ? _audio : (_audio = GetComponent<AudioSource>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private Camera _camera;
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace UnityToolbag
         /// </summary>
         public new Camera camera { get { return _camera ? _camera : (_camera = GetComponent<Camera>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private Collider _collider;
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace UnityToolbag
         /// </summary>
         public new Collider collider { get { return _collider ? _collider : (_collider = GetComponent<Collider>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private Collider2D _collider2D;
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace UnityToolbag
         /// </summary>
         public new Collider2D collider2D { get { return _collider2D ? _collider2D : (_collider2D = GetComponent<Collider2D>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private ConstantForce _constantForce;
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace UnityToolbag
         /// </summary>
         public new ConstantForce constantForce { get { return _constantForce ? _constantForce : (_constantForce = GetComponent<ConstantForce>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private GUIText _guiText;
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace UnityToolbag
         /// </summary>
         public new GUIText guiText { get { return _guiText ? _guiText : (_guiText = GetComponent<GUIText>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private GUITexture _guiTexture;
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace UnityToolbag
         /// </summary>
         public new GUITexture guiTexture { get { return _guiTexture ? _guiTexture : (_guiTexture = GetComponent<GUITexture>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private HingeJoint _hingeJoint;
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace UnityToolbag
         /// </summary>
         public new HingeJoint hingeJoint { get { return _hingeJoint ? _hingeJoint : (_hingeJoint = GetComponent<HingeJoint>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private Light _light;
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace UnityToolbag
         /// </summary>
         public new Light light { get { return _light ? _light : (_light = GetComponent<Light>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private NetworkView _networkView;
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace UnityToolbag
         /// </summary>
         public new NetworkView networkView { get { return _networkView ? _networkView : (_networkView = GetComponent<NetworkView>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private ParticleEmitter _particleEmitter;
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace UnityToolbag
         /// </summary>
         public new ParticleEmitter particleEmitter { get { return _particleEmitter ? _particleEmitter : (_particleEmitter = GetComponent<ParticleEmitter>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private ParticleSystem _particleSystem;
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace UnityToolbag
         /// </summary>
         public new ParticleSystem particleSystem { get { return _particleSystem ? _particleSystem : (_particleSystem = GetComponent<ParticleSystem>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private Renderer _renderer;
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace UnityToolbag
         /// </summary>
         public new Renderer renderer { get { return _renderer ? _renderer : (_renderer = GetComponent<Renderer>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private Rigidbody _rigidbody;
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace UnityToolbag
         /// </summary>
         public new Rigidbody rigidbody { get { return _rigidbody ? _rigidbody : (_rigidbody = GetComponent<Rigidbody>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private Rigidbody2D _rigidbody2D;
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace UnityToolbag
         /// </summary>
         public new Rigidbody2D rigidbody2D { get { return _rigidbody2D ? _rigidbody2D : (_rigidbody2D = GetComponent<Rigidbody2D>()); } }
 
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         private Transform _transform;
 
         /// <summary>

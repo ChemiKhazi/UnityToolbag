@@ -38,7 +38,7 @@ namespace UnityToolbag
         /// The cached Animation component attached to the object.
         /// Will be null if you haven't called ResetAnimationCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new Animation animation;
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace UnityToolbag
         /// The cached AudioSource component attached to the object.
         /// Will be null if you haven't called ResetAudioSourceCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new AudioSource audio;
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace UnityToolbag
         /// The cached Camera component attached to the object.
         /// Will be null if you haven't called ResetCameraCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new Camera camera;
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace UnityToolbag
         /// The cached Collider component attached to the object.
         /// Will be null if you haven't called ResetColliderCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new Collider collider;
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace UnityToolbag
         /// The cached Collider2D component attached to the object.
         /// Will be null if you haven't called ResetCollider2DCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new Collider2D collider2D;
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace UnityToolbag
         /// The cached ConstantForce component attached to the object.
         /// Will be null if you haven't called ResetConstantForceCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new ConstantForce constantForce;
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace UnityToolbag
         /// The cached GUIText component attached to the object.
         /// Will be null if you haven't called ResetGUITextCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new GUIText guiText;
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace UnityToolbag
         /// The cached GUITexture component attached to the object.
         /// Will be null if you haven't called ResetGUITextureCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new GUITexture guiTexture;
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace UnityToolbag
         /// The cached HingeJoint component attached to the object.
         /// Will be null if you haven't called ResetHingeJointCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new HingeJoint hingeJoint;
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace UnityToolbag
         /// The cached Light component attached to the object.
         /// Will be null if you haven't called ResetLightCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new Light light;
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace UnityToolbag
         /// The cached NetworkView component attached to the object.
         /// Will be null if you haven't called ResetNetworkViewCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new NetworkView networkView;
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace UnityToolbag
         /// The cached ParticleEmitter component attached to the object.
         /// Will be null if you haven't called ResetParticleEmitterCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new ParticleEmitter particleEmitter;
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace UnityToolbag
         /// The cached ParticleSystem component attached to the object.
         /// Will be null if you haven't called ResetParticleSystemCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new ParticleSystem particleSystem;
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace UnityToolbag
         /// The cached Renderer component attached to the object.
         /// Will be null if you haven't called ResetRendererCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new Renderer renderer;
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace UnityToolbag
         /// The cached Rigidbody component attached to the object.
         /// Will be null if you haven't called ResetRigidbodyCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new Rigidbody rigidbody;
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace UnityToolbag
         /// The cached Rigidbody2D component attached to the object.
         /// Will be null if you haven't called ResetRigidbody2DCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new Rigidbody2D rigidbody2D;
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace UnityToolbag
         /// The cached Transform component attached to the object.
         /// Will be null if you haven't called ResetTransformCache(), ResetCache(), ResetCacheDestroyed(), or manually stored the component yourself.
         /// </summary>
-        [HideInInspector]
+        [HideInInspector, NonSerialized]
         public new Transform transform;
 
         /// <summary>
