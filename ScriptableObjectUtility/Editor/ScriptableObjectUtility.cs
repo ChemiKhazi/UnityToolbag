@@ -34,10 +34,12 @@ namespace UnityToolbag
             T asset = ScriptableObject.CreateInstance<T>();
 
             string path = AssetDatabase.GetAssetPath(Selection.activeObject);
-            if (string.IsNullOrEmpty(path)) {
+            if (string.IsNullOrEmpty(path))
+            {
                 path = "Assets";
             }
-            else if (!string.IsNullOrEmpty(Path.GetExtension(path))) {
+            else if (!string.IsNullOrEmpty(Path.GetExtension(path)))
+            {
                 path = path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
             }
 
