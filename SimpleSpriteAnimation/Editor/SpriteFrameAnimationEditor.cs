@@ -29,7 +29,7 @@ namespace UnityToolbag
     [CustomEditor(typeof(SpriteFrameAnimation))]
     public class SpriteFrameAnimationEditor : Editor
     {
-        [UnityEditor.MenuItem("Assets/Create/Sprite Frame Animation")]
+        [UnityEditor.MenuItem("Assets/Create/UnityToolbag/Sprite Frame Animation")]
         static void Create()
         {
             ScriptableObjectUtility.CreateAsset<SpriteFrameAnimation>();
