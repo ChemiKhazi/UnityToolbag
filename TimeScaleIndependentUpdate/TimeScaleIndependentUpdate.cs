@@ -64,11 +64,13 @@ namespace UnityToolbag
             deltaTime = (float)(currentTicks - _previousTicks) / Stopwatch.Frequency;
             _previousTicks = currentTicks;
 
-            if (pauseWhenGameIsPaused && IsGamePaused) {
+            if (pauseWhenGameIsPaused && IsGamePaused)
+            {
                 // If this update pauses with the game and the game has been marked as paused, disregard the delta time.
                 deltaTime = 0;
             }
-            else if (deltaTime < 0) {
+            else if (deltaTime < 0)
+            {
                 // It is possible (especially if this script is attached to an object that is created when the
                 // scene is loaded) that the calculated delta time is less than zero. In that case, discard this update.
                 UnityEngine.Debug.LogWarning(string.Format("Delta time less than zero, discarding (delta time was {0})", deltaTime));
@@ -84,7 +86,8 @@ namespace UnityToolbag
         public IEnumerator TimeScaleIndependentWaitForSeconds(float seconds)
         {
             float elapsedTime = 0;
-            while (elapsedTime < seconds) {
+            while (elapsedTime < seconds)
+            {
                 yield return null;
                 elapsedTime += this.deltaTime;
             }
