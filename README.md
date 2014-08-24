@@ -10,6 +10,7 @@ Features
 - [CacheBehaviour](CacheBehaviour) - A drop-in replacement for `MonoBehaviour` as a script base class that provides caching of all standard properties.
 - [Dispatcher](Dispatcher) - Provides a mechanism for invoking code on the main thread from background threads.
 - [DrawTitleSafeArea](DrawTitleSafeArea) - Simple component you add to a camera to render the title safe area.
+- [EditorTools](EditorTools) - Misc tools for making it easier to build editor UI.
 - [ExclusiveChildren](ExclusiveChildren) - Helper script for managing objects in a hierarchy that represent mutually exclusive options (like a set of menu screens)
 - [Future](Future) - Simple implementation of the [future](http://en.wikipedia.org/wiki/Futures_and_promises) concept.
 - [GameSaveSystem](GameSaveSystem) - A helper system for game saves to provide automatic backups and background thread processing along with better game save file paths.
