@@ -45,7 +45,7 @@ namespace UnityToolbag
 
             // Update our particle system cache if our private field is null or the instance was destroyed.
             if (!_particleSystem) {
-                _particleSystem = particleSystem;
+                _particleSystem = GetComponent<ParticleSystem>();
 
                 if (!_particleSystem) {
                     Debug.LogWarning("No valid particle system attached to object.", this);

@@ -98,7 +98,7 @@ namespace UnityToolbag
         {
             // Validate that we have an animation
             if (!_animation) {
-                _animation = animation;
+                _animation = GetComponent<Animation>();
 
                 if (!_animation) {
                     Debug.LogWarning("No valid animation attached to object.", this);
@@ -107,7 +107,7 @@ namespace UnityToolbag
             }
 
             // Get and validate the animation state
-            var state = animation[name];
+            var state = GetComponent<Animation>()[name];
             if (!state) {
                 Debug.LogWarning(string.Format("No animation state named '{0}' found.", name), this);
                 return;

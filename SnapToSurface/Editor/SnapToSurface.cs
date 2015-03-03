@@ -66,23 +66,23 @@ namespace UnityToolbag
         {
             foreach (GameObject go in Selection.gameObjects) {
                 // If the object has a collider we can do a nice sweep test for accurate placement
-                if (go.collider != null && !(go.collider is CharacterController)) {
+                if (go.GetComponent<Collider>() != null && !(go.GetComponent<Collider>() is CharacterController)) {
                     // Figure out if we need a temp rigid body and add it if needed
                     bool addedRigidBody = false;
-                    if (go.rigidbody == null) {
+                    if (go.GetComponent<Rigidbody>() == null) {
                         go.AddComponent<Rigidbody>();
                         addedRigidBody = true;
                     }
 
                     // Sweep the rigid body downwards and, if we hit something, move the object the distance
                     RaycastHit hit;
-                    if (go.rigidbody.SweepTest(dir, out hit)) {
+                    if (go.GetComponent<Rigidbody>().SweepTest(dir, out hit)) {
                         go.transform.position += dir * hit.distance;
                     }
 
                     // If we added a rigid body for this test, remove it now
                     if (addedRigidBody) {
-                        DestroyImmediate(go.rigidbody);
+                        DestroyImmediate(go.GetComponent<Rigidbody>());
                     }
                 }
                 // Without a collider, we do a simple raycast from the transform

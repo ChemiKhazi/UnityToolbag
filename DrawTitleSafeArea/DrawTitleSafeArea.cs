@@ -41,7 +41,7 @@ namespace UnityToolbag
         {
             if (!this.camera)
             {
-                this.camera = base.camera;
+                this.camera = base.GetComponent<Camera>();
             }
         }
 
