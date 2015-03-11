@@ -11,13 +11,18 @@ namespace UnityToolbag
     {
         private static Type _utilityType;
         private static PropertyInfo _sortingLayerNamesProperty;
-        private static MethodInfo _getSortingLayerUniqueIDMethod;
+        private static MethodInfo _getSortingLayerIDMethod;
 
         static SortingLayerHelper()
         {
             _utilityType = Type.GetType("UnityEditorInternal.InternalEditorUtility, UnityEditor");
             _sortingLayerNamesProperty = _utilityType.GetProperty("sortingLayerNames", BindingFlags.Static | BindingFlags.NonPublic);
-            _getSortingLayerUniqueIDMethod = _utilityType.GetMethod("GetSortingLayerUniqueID", BindingFlags.Static | BindingFlags.NonPublic);
+
+            // Unity 5.0 calls this "GetSortingLayerUniqueID" but in 4.x it was "GetSortingLayerUserID".
+            _getSortingLayerIDMethod = _utilityType.GetMethod("GetSortingLayerUniqueID", BindingFlags.Static | BindingFlags.NonPublic);
+            if (_getSortingLayerIDMethod == null) {
+                _getSortingLayerIDMethod = _utilityType.GetMethod("GetSortingLayerUserID", BindingFlags.Static | BindingFlags.NonPublic);
+            }
         }
 
         // Gets an array of sorting layer names.
@@ -67,11 +72,11 @@ namespace UnityToolbag
         // Thankfully there is a private helper we can call to get the ID for a layer given its index.
         public static int GetSortingLayerIDForIndex(int index)
         {
-            if (_getSortingLayerUniqueIDMethod == null) {
+            if (_getSortingLayerIDMethod == null) {
                 return 0;
             }
 
-            return (int)_getSortingLayerUniqueIDMethod.Invoke(null, new object[] { index });
+            return (int)_getSortingLayerIDMethod.Invoke(null, new object[] { index });
         }
     }
 }
