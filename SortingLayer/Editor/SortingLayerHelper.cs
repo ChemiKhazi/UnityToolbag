@@ -1,21 +1,23 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System;
 using System.Reflection;
 
 namespace UnityToolbag
 {
     // Helpers used by the different sorting layer classes.
+    [InitializeOnLoad]
     public static class SortingLayerHelper
     {
         private static Type _utilityType;
         private static PropertyInfo _sortingLayerNamesProperty;
-        private static MethodInfo _getSortingLayerUserIdMethod;
+        private static MethodInfo _getSortingLayerUniqueIDMethod;
 
         static SortingLayerHelper()
         {
             _utilityType = Type.GetType("UnityEditorInternal.InternalEditorUtility, UnityEditor");
             _sortingLayerNamesProperty = _utilityType.GetProperty("sortingLayerNames", BindingFlags.Static | BindingFlags.NonPublic);
-            _getSortingLayerUserIdMethod = _utilityType.GetMethod("GetSortingLayerUserID", BindingFlags.Static | BindingFlags.NonPublic);
+            _getSortingLayerUniqueIDMethod = _utilityType.GetMethod("GetSortingLayerUniqueID", BindingFlags.Static | BindingFlags.NonPublic);
         }
 
         // Gets an array of sorting layer names.
@@ -65,11 +67,11 @@ namespace UnityToolbag
         // Thankfully there is a private helper we can call to get the ID for a layer given its index.
         public static int GetSortingLayerIDForIndex(int index)
         {
-            if (_getSortingLayerUserIdMethod == null) {
+            if (_getSortingLayerUniqueIDMethod == null) {
                 return 0;
             }
 
-            return (int)_getSortingLayerUserIdMethod.Invoke(null, new object[] { index });
+            return (int)_getSortingLayerUniqueIDMethod.Invoke(null, new object[] { index });
         }
     }
 }
