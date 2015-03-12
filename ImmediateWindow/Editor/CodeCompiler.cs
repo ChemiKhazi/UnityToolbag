@@ -1,27 +1,4 @@
-﻿/*
- * Copyright (c) 2013, Nick Gravelyn.
- *
- * This software is provided 'as-is', without any express or implied
- * warranty. In no event will the authors be held liable for any damages
- * arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose,
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- *
- *    1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- *
- *    2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- *
- *    3. This notice may not be removed or altered from any source
- *    distribution.
- */
-
-using System;
+﻿using System;
 using System.CodeDom.Compiler;
 using System.Reflection;
 using Microsoft.CSharp;
@@ -66,8 +43,7 @@ public static class CodeSnippetWrapper
 
             // Compile the full script
             Assembly assembly;
-            if (CompileCSharpScript(string.Format(methodScriptWrapper, methodText), out errors, out assembly))
-            {
+            if (CompileCSharpScript(string.Format(methodScriptWrapper, methodText), out errors, out assembly)) {
                 // If compilation succeeded, we can use reflection to get the method and pass that back to the user
                 methodIfSucceeded = assembly.GetType("CodeSnippetWrapper").GetMethod("PerformAction", BindingFlags.Static | BindingFlags.Public);
                 return true;
@@ -108,10 +84,8 @@ public static class CodeSnippetWrapper
             errors = result.Errors;
 
             // See if any errors are actually errors. if so return false
-            foreach (CompilerError e in errors)
-            {
-                if (!e.IsWarning)
-                {
+            foreach (CompilerError e in errors) {
+                if (!e.IsWarning) {
                     return false;
                 }
             }
