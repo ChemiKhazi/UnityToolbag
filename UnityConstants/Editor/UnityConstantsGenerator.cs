@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
@@ -75,7 +76,7 @@ namespace UnityToolbag
                 for (int i = 0; i < 32; i++) {
                     string layer = UnityEditorInternal.InternalEditorUtility.GetLayerName(i);
                     if (!string.IsNullOrEmpty(layer)) {
-                        writer.WriteLine("        public const int {0}Mask = 1 << {0};", MakeSafeForCode(layer));
+                        writer.WriteLine("        public const int {0}Mask = {1};", MakeSafeForCode(layer), 1 << i);
                     }
                 }
                 writer.WriteLine("    }");
@@ -103,7 +104,7 @@ namespace UnityToolbag
         // if the string starts with a number. It's not the most robust, but should handle most cases just fine.
         private static string MakeSafeForCode(string str)
         {
-            str = str.Replace(" ", "");
+			str = Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
             if (char.IsDigit(str[0])) {
                 str = "_" + str;
             }
