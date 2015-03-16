@@ -67,16 +67,26 @@ namespace UnityToolbag
                 writer.WriteLine("        // Regular layer indices for assigning layers dynamically in code");
                 for (int i = 0; i < 32; i++) {
                     string layer = UnityEditorInternal.InternalEditorUtility.GetLayerName(i);
-                    if (!string.IsNullOrEmpty(layer)) {
-                        writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(layer), i);
+                    if (!string.IsNullOrEmpty(layer))
+                    {
+	                    string layerName = MakeSafeForCode(layer);
+						writer.WriteLine("        /// <summary>");
+						writer.WriteLine("        /// Index of layer {0}", layerName);
+						writer.WriteLine("        /// </summary>");
+                        writer.WriteLine("        public const int {0} = {1};", layerName, i);
                     }
                 }
                 writer.WriteLine();
                 writer.WriteLine("        // Pre-configured layer masks for use with raycasts or other such queries");
                 for (int i = 0; i < 32; i++) {
                     string layer = UnityEditorInternal.InternalEditorUtility.GetLayerName(i);
-                    if (!string.IsNullOrEmpty(layer)) {
-                        writer.WriteLine("        public const int {0}Mask = {1};", MakeSafeForCode(layer), 1 << i);
+					if (!string.IsNullOrEmpty(layer))
+					{
+						string layerName = MakeSafeForCode(layer);
+						writer.WriteLine("        /// <summary>");
+						writer.WriteLine("        /// Bitmask of layer {0}", layerName);
+						writer.WriteLine("        /// </summary>");
+                        writer.WriteLine("        public const int {0}Mask = {1};", layerName, 1 << i);
                     }
                 }
                 writer.WriteLine("    }");
