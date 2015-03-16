@@ -86,7 +86,7 @@ namespace UnityToolbag
 						writer.WriteLine("        /// <summary>");
 						writer.WriteLine("        /// Bitmask of layer {0}", layerName);
 						writer.WriteLine("        /// </summary>");
-                        writer.WriteLine("        public const int {0}Mask = {1};", layerName, 1 << i);
+                        writer.WriteLine("        public const int {0}Mask = 1 << {1};", layerName, i);
                     }
                 }
                 writer.WriteLine("    }");
