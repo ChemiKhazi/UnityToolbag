@@ -15,17 +15,4 @@ public static class Vector3Extensions
 		Vector3 projectionOnNormal = Vector3.Project(input, normal);
 		return (input - projectionOnNormal);
 	}
-
-	public static void SetX(this Vector3 input, float x)
-	{
-		input = new Vector3(x, input.y, input.z);
-	}
-	public static void SetY(this Vector3 input, float y)
-	{
-		input = new Vector3(input.x, y, input.z);
-	}
-	public static void SetZ(this Vector3 input, float z)
-	{
-		input = new Vector3(input.x, input.y, z);
-	}
 }
