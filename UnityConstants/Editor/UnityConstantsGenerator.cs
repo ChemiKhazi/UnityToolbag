@@ -113,7 +113,7 @@ namespace UnityToolbag
 
         private static string MakeSafeForCode(string str)
         {
-            str = Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+            str = Regex.Replace(str, "[^a-zA-Z0-9_]", "_", RegexOptions.Compiled);
             if (char.IsDigit(str[0])) {
                 str = "_" + str;
             }
