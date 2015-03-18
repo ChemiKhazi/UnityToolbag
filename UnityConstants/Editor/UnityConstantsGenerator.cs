@@ -42,6 +42,9 @@ namespace UnityToolbag
                 writer.WriteLine("    public static class Tags");
                 writer.WriteLine("    {");
                 foreach (var tag in UnityEditorInternal.InternalEditorUtility.tags) {
+                    writer.WriteLine("        /// <summary>");
+                    writer.WriteLine("        /// Name of tag '{0}'.", tag);
+                    writer.WriteLine("        /// </summary>");
                     writer.WriteLine("        public const string {0} = \"{1}\";", MakeSafeForCode(tag), tag);
                 }
                 writer.WriteLine("    }");
@@ -55,6 +58,9 @@ namespace UnityToolbag
                     for (int i = 0; i < sortingLayerNames.Length; i++) {
                         var name = sortingLayerNames[i];
                         int id = SortingLayerHelper.GetSortingLayerIDForName(name);
+                        writer.WriteLine("        /// <summary>");
+                        writer.WriteLine("        /// ID of sorting layer '{0}'.", name);
+                        writer.WriteLine("        /// </summary>");
                         writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(name), id);
                     }
                     writer.WriteLine("    }");
@@ -64,29 +70,23 @@ namespace UnityToolbag
                 // Write out layers
                 writer.WriteLine("    public static class Layers");
                 writer.WriteLine("    {");
-                writer.WriteLine("        // Regular layer indices for assigning layers dynamically in code");
                 for (int i = 0; i < 32; i++) {
                     string layer = UnityEditorInternal.InternalEditorUtility.GetLayerName(i);
-                    if (!string.IsNullOrEmpty(layer))
-                    {
-	                    string layerName = MakeSafeForCode(layer);
-						writer.WriteLine("        /// <summary>");
-						writer.WriteLine("        /// Index of layer {0}", layerName);
-						writer.WriteLine("        /// </summary>");
-                        writer.WriteLine("        public const int {0} = {1};", layerName, i);
+                    if (!string.IsNullOrEmpty(layer)) {
+                        writer.WriteLine("        /// <summary>");
+                        writer.WriteLine("        /// Index of layer '{0}'.", layer);
+                        writer.WriteLine("        /// </summary>");
+                        writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(layer), i);
                     }
                 }
                 writer.WriteLine();
-                writer.WriteLine("        // Pre-configured layer masks for use with raycasts or other such queries");
                 for (int i = 0; i < 32; i++) {
                     string layer = UnityEditorInternal.InternalEditorUtility.GetLayerName(i);
-					if (!string.IsNullOrEmpty(layer))
-					{
-						string layerName = MakeSafeForCode(layer);
-						writer.WriteLine("        /// <summary>");
-						writer.WriteLine("        /// Bitmask of layer {0}", layerName);
-						writer.WriteLine("        /// </summary>");
-                        writer.WriteLine("        public const int {0}Mask = 1 << {1};", layerName, i);
+                    if (!string.IsNullOrEmpty(layer)) {
+                        writer.WriteLine("        /// <summary>");
+                        writer.WriteLine("        /// Bitmask of layer '{0}'.", layer);
+                        writer.WriteLine("        /// </summary>");
+                        writer.WriteLine("        public const int {0}Mask = 1 << {1};", MakeSafeForCode(layer), i);
                     }
                 }
                 writer.WriteLine("    }");
@@ -96,10 +96,11 @@ namespace UnityToolbag
                 writer.WriteLine("    public static class Scenes");
                 writer.WriteLine("    {");
                 for (int i = 0; i < EditorBuildSettings.scenes.Length; i++) {
-                    writer.WriteLine(
-                        "        public const int {0} = {1};",
-                        MakeSafeForCode(Path.GetFileNameWithoutExtension(EditorBuildSettings.scenes[i].path)),
-                        i);
+                    string scene = Path.GetFileNameWithoutExtension(EditorBuildSettings.scenes[i].path);
+                    writer.WriteLine("        /// <summary>");
+                    writer.WriteLine("        /// Name of '{0}'.", scene);
+                    writer.WriteLine("        /// </summary>");
+                    writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(scene), i);
                 }
                 writer.WriteLine("    }");
                 writer.WriteLine("}");
@@ -110,11 +111,9 @@ namespace UnityToolbag
             AssetDatabase.Refresh();
         }
 
-        // Takes in a string and makes it safe for use a variable name in C#. This just means stripping out spaces and prefixing with a "_" character
-        // if the string starts with a number. It's not the most robust, but should handle most cases just fine.
         private static string MakeSafeForCode(string str)
         {
-			str = Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+            str = Regex.Replace(str, "[^a-zA-Z0-9_]", "_", RegexOptions.Compiled);
             if (char.IsDigit(str[0])) {
                 str = "_" + str;
             }
