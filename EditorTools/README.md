@@ -48,3 +48,18 @@ Creates a scroll view section. Requires a ref parameter for the scroll location 
             if (GUILayout.Button("Button " + i)) { }
         }
     }
+
+**SceneGUIArea**
+
+Used in place of Handles.BeginGUI/EndGUI inside the OnSceneGUI function, creates an area to call GUILayout commands to.
+
+    // Inside an editor/inspector, for drawing into the scene
+    void OnSceneGUI()
+    {
+      // Draw GUI commands into a 100x100 rect on the
+      // top left of screen
+      using (new SceneGUIArea(new Rect(0, 0, 100, 100)))
+      {
+        GUILayout.Button("Test Button");
+      }
+    }
