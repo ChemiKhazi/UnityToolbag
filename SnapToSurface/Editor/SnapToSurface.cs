@@ -36,7 +36,7 @@ namespace UnityToolbag
         static void ShowWindow()
         {
             var window = EditorWindow.GetWindow<SnapToSurface>();
-            window.title = "Snap To Surface";
+            window.titleContent.text = "Snap To Surface";
         }
 
         static void Drop(Vector3 dir)
