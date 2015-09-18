@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Collections.Generic;
 
 namespace UnityToolbag
 {
@@ -103,9 +104,32 @@ namespace UnityToolbag
                     writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(scene), i);
                 }
                 writer.WriteLine("    }");
-                writer.WriteLine("}");
-                writer.WriteLine();
-            }
+				writer.WriteLine();
+
+				// Write out Input axes
+				writer.WriteLine("    public static class InputAxes");
+				writer.WriteLine("    {");
+				SerializedObject inputManagerProp = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);
+				SerializedProperty axesProp = inputManagerProp.FindProperty("m_Axes");
+				HashSet<string> axes = new HashSet<string>();
+				foreach (SerializedProperty axe in axesProp)
+				{
+					string axename = GetChildProperty(axe, "m_Name").stringValue;
+					if(!axes.Contains(axename))
+					{
+						writer.WriteLine("        /// <summary>");
+						writer.WriteLine("        /// Name of axe '{0}'.", axename);
+						writer.WriteLine("        /// </summary>");
+						writer.WriteLine("        public const string {0} = \"{1}\";", MakeSafeForCode(axename), axename);
+						axes.Add(axename);
+					}
+				}
+				writer.WriteLine("    }");
+
+				// End of namespace UnityConstants
+				writer.WriteLine("}");
+				writer.WriteLine();
+			}
 
             // Refresh
             AssetDatabase.Refresh();
@@ -119,5 +143,17 @@ namespace UnityToolbag
             }
             return str;
         }
-    }
+
+		private static SerializedProperty GetChildProperty(SerializedProperty parent, string name)
+		{
+			SerializedProperty child = parent.Copy();
+			child.Next(true);
+			do
+			{
+				if (child.name == name) return child;
+			}
+			while (child.Next(false));
+			return null;
+		}
+	}
 }
