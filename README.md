@@ -1,11 +1,9 @@
-UnityToolbag
-===
+# UnityToolbag
 
 This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder has its own README to explain the usage in more depth than here. All scripts are being written with Unity 5.0 and may or may not work in earlier versions.
 
 
-Features
----
+## Features
 
 - [CacheBehaviour](CacheBehaviour) - A drop-in replacement for `MonoBehaviour` as a script base class that provides caching of all standard properties.
 - [Dispatcher](Dispatcher) - Provides a mechanism for invoking code on the main thread from background threads.
@@ -24,8 +22,7 @@ Features
 - [UnityLock](UnityLock) - Basic tool for locking objects in the scene to minimize accidental edits while working.
 
 
-Usage
----
+## Usage
 
 Simply clone the repository into the 'Assets' folder of a Unity project and you're good to go. If you're already using Git, you can use a submodule to check out into Assets without the Toolbag getting added to your repository.
 
@@ -36,7 +33,11 @@ Any component types are exposed through the component menu under UnityToolbag:
 ![ComponentMenu.png](https://raw.github.com/nickgravelyn/UnityToolbag/master/ComponentMenu.png)
 
 
-Shameless Plug
----
+## Contributing
+
+Feel free to contribute fixes, updates, or enhancements to the code via pull request. New tools or utilities are welcome provided they are useful to a variety of people. Please read the [contribution guide](https://github.com/nickgravelyn/UnityToolbag/wiki/Contributing-Guide) for further details.
+
+
+## Shameless Plug
 
 If you find any code in here to be useful and feel so inclined, you can help me out by picking up a copy of my company's first game [Shipwreck](http://brushfiregames.com/shipwreck). Absolutely not required (this code is free) but definitely appreciated. :)
