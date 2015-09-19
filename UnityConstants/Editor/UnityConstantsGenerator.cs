@@ -99,37 +99,35 @@ namespace UnityToolbag
                 for (int i = 0; i < EditorBuildSettings.scenes.Length; i++) {
                     string scene = Path.GetFileNameWithoutExtension(EditorBuildSettings.scenes[i].path);
                     writer.WriteLine("        /// <summary>");
-                    writer.WriteLine("        /// Name of '{0}'.", scene);
+                    writer.WriteLine("        /// ID of scene '{0}'.", scene);
                     writer.WriteLine("        /// </summary>");
                     writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(scene), i);
                 }
                 writer.WriteLine("    }");
-				writer.WriteLine();
+                writer.WriteLine();
 
-				// Write out Input axes
-				writer.WriteLine("    public static class InputAxes");
-				writer.WriteLine("    {");
-				SerializedObject inputManagerProp = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);
-				SerializedProperty axesProp = inputManagerProp.FindProperty("m_Axes");
-				HashSet<string> axes = new HashSet<string>();
-				foreach (SerializedProperty axe in axesProp)
-				{
-					string axename = GetChildProperty(axe, "m_Name").stringValue;
-					if(!axes.Contains(axename))
-					{
-						writer.WriteLine("        /// <summary>");
-						writer.WriteLine("        /// Name of axe '{0}'.", axename);
-						writer.WriteLine("        /// </summary>");
-						writer.WriteLine("        public const string {0} = \"{1}\";", MakeSafeForCode(axename), axename);
-						axes.Add(axename);
-					}
-				}
-				writer.WriteLine("    }");
+                // Write out Input axes
+                writer.WriteLine("    public static class Axes");
+                writer.WriteLine("    {");
+                var axes = new HashSet<string>();
+                var inputManagerProp = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);
+                foreach (SerializedProperty axe in inputManagerProp.FindProperty("m_Axes")) {
+                    var name = axe.FindPropertyRelative("m_Name").stringValue;
+                    var variableName = MakeSafeForCode(name);
+                    if (!axes.Contains(variableName)) {
+                        writer.WriteLine("        /// <summary>");
+                        writer.WriteLine("        /// Input axis '{0}'.", name);
+                        writer.WriteLine("        /// </summary>");
+                        writer.WriteLine("        public const string {0} = \"{1}\";", variableName, name);
+                        axes.Add(variableName);
+                    }
+                }
+                writer.WriteLine("    }");
 
-				// End of namespace UnityConstants
-				writer.WriteLine("}");
-				writer.WriteLine();
-			}
+                // End of namespace UnityConstants
+                writer.WriteLine("}");
+                writer.WriteLine();
+            }
 
             // Refresh
             AssetDatabase.Refresh();
@@ -143,17 +141,5 @@ namespace UnityToolbag
             }
             return str;
         }
-
-		private static SerializedProperty GetChildProperty(SerializedProperty parent, string name)
-		{
-			SerializedProperty child = parent.Copy();
-			child.Next(true);
-			do
-			{
-				if (child.name == name) return child;
-			}
-			while (child.Next(false));
-			return null;
-		}
-	}
+    }
 }
