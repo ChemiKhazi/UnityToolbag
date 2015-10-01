@@ -2,13 +2,13 @@
 
 namespace UnityToolbag
 {
-	public class AnimParamsAttribute : PropertyAttribute
-	{
-		public string animatorProp;
+    public class AnimParamsAttribute : PropertyAttribute
+    {
+        public string animatorProp;
 
-		public AnimParamsAttribute(string animatorPropName)
-		{
-			animatorProp = animatorPropName;
-		}
-	}
+        public AnimParamsAttribute(string animatorPropName)
+        {
+            animatorProp = animatorPropName;
+        }
+    }
 }
