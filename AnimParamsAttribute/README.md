@@ -6,9 +6,11 @@ This attribute turns string properties into a popup of the parameters available 
 Usage
 ---
 
-The component you want to use this attribute on must have an `Animator` exposed as a property/variable.
+The component you want to use the attribute on must have an `Animator` exposed as a property/variable.
 
-Use the `AnimParams` attribute on a `string` property/variable and the drawer will show a popup that lists all the parameters available in the given `Animator`. Pass the name of the `Animator` property as a string to the `AnimParams`
+Use the `AnimParams` attribute on a `string` property/variable and the inspector will show a popup that lists all the parameter names available in the given `Animator`.
+
+Pass the name of the `Animator` property as a string to the `AnimParams` attribute.
 
 ```C#
 public class ExampleView : MonoBehaviour
