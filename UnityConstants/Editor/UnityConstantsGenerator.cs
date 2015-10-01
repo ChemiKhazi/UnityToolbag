@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Collections.Generic;
 
 namespace UnityToolbag
 {
@@ -98,11 +99,32 @@ namespace UnityToolbag
                 for (int i = 0; i < EditorBuildSettings.scenes.Length; i++) {
                     string scene = Path.GetFileNameWithoutExtension(EditorBuildSettings.scenes[i].path);
                     writer.WriteLine("        /// <summary>");
-                    writer.WriteLine("        /// Name of '{0}'.", scene);
+                    writer.WriteLine("        /// ID of scene '{0}'.", scene);
                     writer.WriteLine("        /// </summary>");
                     writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(scene), i);
                 }
                 writer.WriteLine("    }");
+                writer.WriteLine();
+
+                // Write out Input axes
+                writer.WriteLine("    public static class Axes");
+                writer.WriteLine("    {");
+                var axes = new HashSet<string>();
+                var inputManagerProp = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);
+                foreach (SerializedProperty axe in inputManagerProp.FindProperty("m_Axes")) {
+                    var name = axe.FindPropertyRelative("m_Name").stringValue;
+                    var variableName = MakeSafeForCode(name);
+                    if (!axes.Contains(variableName)) {
+                        writer.WriteLine("        /// <summary>");
+                        writer.WriteLine("        /// Input axis '{0}'.", name);
+                        writer.WriteLine("        /// </summary>");
+                        writer.WriteLine("        public const string {0} = \"{1}\";", variableName, name);
+                        axes.Add(variableName);
+                    }
+                }
+                writer.WriteLine("    }");
+
+                // End of namespace UnityConstants
                 writer.WriteLine("}");
                 writer.WriteLine();
             }
