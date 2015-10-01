@@ -20,7 +20,7 @@ This repo is a host for any little Unity scripts I write that are simple and eas
 - [TimeScaleIndependentUpdate](TimeScaleIndependentUpdate) - Components to make it easier to continue animations when `Time.timeScale` is set to 0 (i.e. paused).
 - [UnityConstants](UnityConstants) - Tool for generating a C# script containing the names and values for tags, layers, sorting layers, and scenes.
 - [UnityLock](UnityLock) - Basic tool for locking objects in the scene to minimize accidental edits while working.
-
+- [AnimParamsAttribute](AnimParamsAttribute) - A property attribute that exposes the parameters of an `Animator` as a popup in the inspector.
 
 ## Usage
 
