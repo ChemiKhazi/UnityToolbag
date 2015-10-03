@@ -76,31 +76,6 @@ public class Utils
 				yield return new WaitForSeconds(repeatTime);
 		}
 	}
-	
-	public static UIRoot GetNguiRoot(Transform target)
-	{
-		UIRoot testRoot = target.gameObject.GetComponent<UIRoot>();
-		if (testRoot == null)
-		{
-			if (target.parent != null)
-				return GetNguiRoot(target.parent);
-			else
-				return null;
-		}
-		else
-			return testRoot;
-	}
-	
-	public static float GetLabelHeight(UILabel label)
-	{
-		string[] splitLines = label.processedText.Split('\n');
-		int lines = splitLines.Length;
-		lines = Mathf.Max(lines, 1);
-		
-		float lineHeight = label.transform.localScale.y;
-		
-		return lines * lineHeight;
-	}
 
 	/// <summary>
 	/// Perform a deep Copy of the object.
