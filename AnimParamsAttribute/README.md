@@ -3,6 +3,10 @@ Animator Parameters Attribute
 
 This attribute turns string properties into a popup of the parameters available inside an `Animator` in the inspector.
 
+| Animator | Script | Inspector |
+|--|--|--|
+| ![Component](../READMEImg/AnimParamsAttr/AnimParams-Component.png) | ![Script](../READMEImg/AnimParamsAttr/AnimParams-Script.png) | ![Inspector](../READMEImg/AnimParamsAttr/AnimParams-Inspector.png) |
+
 Usage
 ---
 
