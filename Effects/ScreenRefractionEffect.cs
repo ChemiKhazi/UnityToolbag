@@ -32,7 +32,7 @@ namespace SecondStar.Effects
 		protected override void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
 			RenderTexture distortBuffer = RenderTexture.GetTemporary(source.width, source.height);
-			effectsCamera.CopyFrom(camera);
+			effectsCamera.CopyFrom(GetComponent<Camera>());
 			effectsCamera.cullingMask = refractMask;
 			effectsCamera.backgroundColor = cameraColor;
 			effectsCamera.transparencySortMode = TransparencySortMode.Orthographic;

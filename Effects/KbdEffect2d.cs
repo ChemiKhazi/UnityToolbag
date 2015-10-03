@@ -68,7 +68,7 @@ namespace SecondStar.LevelDesign
 				return;
 			}
 
-			camera.depthTextureMode |= DepthTextureMode.Depth;
+			GetComponent<Camera>().depthTextureMode |= DepthTextureMode.Depth;
 			if (doFog && (!fogShader || !fogShader.isSupported))
 				enabled = false;
 		}
@@ -136,12 +136,12 @@ namespace SecondStar.LevelDesign
 				Shader.SetGlobalFloat("_EffectCeiling", effectCeiling);
 
 				// Render the position data out
-				positionBuffer = RenderTexture.GetTemporary((int)(camera.pixelWidth),
-															(int)(camera.pixelHeight),
+				positionBuffer = RenderTexture.GetTemporary((int)(GetComponent<Camera>().pixelWidth),
+															(int)(GetComponent<Camera>().pixelHeight),
 															16, RenderTextureFormat.Default);
 
-				effectsCamera.CopyFrom(camera);
-				effectsCamera.cullingMask = camera.cullingMask;
+				effectsCamera.CopyFrom(GetComponent<Camera>());
+				effectsCamera.cullingMask = GetComponent<Camera>().cullingMask;
 				effectsCamera.backgroundColor = new Color(0, 0, 0, 0);
 				effectsCamera.clearFlags = CameraClearFlags.SolidColor;
 				effectsCamera.depthTextureMode = DepthTextureMode.DepthNormals;
@@ -155,19 +155,19 @@ namespace SecondStar.LevelDesign
 			if (doLight)
 			{
 				// Create a buffer to render the light layers into, half size for quicker render
-				lightBuffer = RenderTexture.GetTemporary((int)(camera.pixelWidth),
-														(int)(camera.pixelHeight),
+				lightBuffer = RenderTexture.GetTemporary((int)(GetComponent<Camera>().pixelWidth),
+														(int)(GetComponent<Camera>().pixelHeight),
 														16, RenderTextureFormat.Default);
 				// Create another buffer to accumulate the lights on
-				accumulationBuffer = RenderTexture.GetTemporary((int)camera.pixelWidth,
-																(int)camera.pixelHeight,
-																(int)camera.depth,
+				accumulationBuffer = RenderTexture.GetTemporary((int)GetComponent<Camera>().pixelWidth,
+																(int)GetComponent<Camera>().pixelHeight,
+																(int)GetComponent<Camera>().depth,
 																RenderTextureFormat.Default);
 			}
 			// Not lighting, reset stuff
 			else
 			{
-				camera.targetTexture = null;
+				GetComponent<Camera>().targetTexture = null;
 			}
 		}
 
@@ -182,7 +182,7 @@ namespace SecondStar.LevelDesign
 			bool hasBlit = false;
 
 			// Used for precalculating values for the shader
-			float cameraDepth = camera.farClipPlane - camera.nearClipPlane;
+			float cameraDepth = GetComponent<Camera>().farClipPlane - GetComponent<Camera>().nearClipPlane;
 			
 			if (doLight)
 			{
@@ -190,7 +190,7 @@ namespace SecondStar.LevelDesign
 				Graphics.Blit(source, accumulationBuffer);
 
 				// Setup the effects camera
-				effectsCamera.CopyFrom(camera);
+				effectsCamera.CopyFrom(GetComponent<Camera>());
 				effectsCamera.backgroundColor = new Color(0, 0, 0, 0);
 				effectsCamera.clearFlags = CameraClearFlags.SolidColor;
 				effectsCamera.transparencySortMode = TransparencySortMode.Orthographic;
@@ -210,9 +210,9 @@ namespace SecondStar.LevelDesign
 
 					// Calculate values for the light in camera depth space
 					float lightVolume = (light.lightVolume / cameraDepth);
-					Vector3 depthVector = camera.transform.position - light.transform.position;
-					depthVector = Vector3.Project(depthVector, camera.transform.forward);
-					float lightDepth = Vector3.Dot(depthVector, camera.transform.forward * -1) / cameraDepth;
+					Vector3 depthVector = GetComponent<Camera>().transform.position - light.transform.position;
+					depthVector = Vector3.Project(depthVector, GetComponent<Camera>().transform.forward);
+					float lightDepth = Vector3.Dot(depthVector, GetComponent<Camera>().transform.forward * -1) / cameraDepth;
 
 					SetupLightMaterial(light.LightShader);
 					LightMaterial.SetTexture("_PositionTex", positionBuffer);
@@ -242,9 +242,9 @@ namespace SecondStar.LevelDesign
 			if (doFog)
 			{
 				// Calculate fog parameters in camera depth space
-				Vector3 fogVector = new Vector3(0, 0, fogStart - camera.transform.position.z);
-				fogVector = Vector3.Project(fogVector, camera.transform.forward);
-				float fogStartPos = Vector3.Dot(fogVector, camera.transform.forward) / cameraDepth;
+				Vector3 fogVector = new Vector3(0, 0, fogStart - GetComponent<Camera>().transform.position.z);
+				fogVector = Vector3.Project(fogVector, GetComponent<Camera>().transform.forward);
+				float fogStartPos = Vector3.Dot(fogVector, GetComponent<Camera>().transform.forward) / cameraDepth;
 				float fogFallOff = fogStartPos + (fogRollOff / cameraDepth);
 
 				// Setup fog parameters

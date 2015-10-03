@@ -110,10 +110,10 @@ namespace SecondStar.Effects
 			{
 				RenderTexture maskBuffer = RenderTexture.GetTemporary(renderWidth, renderHeight, 0, source.format);
 
-				effectsCamera.CopyFrom(camera);
+				effectsCamera.CopyFrom(GetComponent<Camera>());
 				effectsCamera.cullingMask = maskLayer;
 				effectsCamera.backgroundColor = Color.black;
-				effectsCamera.transparencySortMode = camera.transparencySortMode;
+				effectsCamera.transparencySortMode = GetComponent<Camera>().transparencySortMode;
 				effectsCamera.targetTexture = maskBuffer;
 				effectsCamera.Render();
 
