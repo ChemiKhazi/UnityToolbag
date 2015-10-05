@@ -32,7 +32,7 @@ namespace UnityToolbag
 		        popupGUI = GetFromComponent(property, animParams, out selectedIndex);
 	        }
 
-	        if (popupGUI == null)
+	        if (popupGUI == null || popupGUI.Length == 0)
 			{
 				EditorGUI.PropertyField(position, property, label);
 		        return;
@@ -48,7 +48,7 @@ namespace UnityToolbag
             if (propVal.Equals(property.stringValue) == false)
             {
                 property.stringValue = propVal;
-                EditorUtility.SetDirty(property.serializedObject.targetObject);
+	            property.serializedObject.ApplyModifiedProperties();
             }
         }
 
@@ -62,38 +62,27 @@ namespace UnityToolbag
 		    if (animParamCfgProp == null)
 			    return null;
 
-		    SerializedProperty refType = animParamCfgProp.FindPropertyRelative("referenceType");
 		    SerializedProperty refPath = animParamCfgProp.FindPropertyRelative("instanceId");
 
-		    if (refType == null || refPath == null)
+		    if (refPath == null)
 			    return null;
 
 		    AnimatorControllerParameter[] paramList = null;
 		    int targetId;
 
-		    if (refType.enumValueIndex == (int) AnimParamsConfig.RefType.Animator)
-		    {
-			    if (int.TryParse(refPath.stringValue, out targetId))
-			    {
-				    Animator targetAnimator = EditorUtility.InstanceIDToObject(targetId) as Animator;
-					if (targetAnimator != null)
-						paramList = targetAnimator.parameters;
-			    }
-		    }
-		    else
+			// Try to get the instance id out of the path property
+			if (int.TryParse(refPath.stringValue, out targetId))
 			{
-				if (int.TryParse(refPath.stringValue, out targetId))
-				{
-					AnimatorController targetController = EditorUtility.InstanceIDToObject(targetId) as AnimatorController;
-					if (targetController != null)
-						paramList = targetController.parameters;
-				}
-			    
-		    }
+				AnimatorController targetController = EditorUtility.InstanceIDToObject(targetId) as AnimatorController;
+				if (targetController != null)
+					paramList = targetController.parameters;
+			}
 
+			// If we got a parameter list, return the built list
 		    if (paramList != null)
 			    return BuildParamList(paramList, property.stringValue, out selectedIndex);
 
+			// No list, just return null
 		    return null;
 	    }
 

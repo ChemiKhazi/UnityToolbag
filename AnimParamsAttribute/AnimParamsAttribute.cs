@@ -36,14 +36,6 @@ namespace UnityToolbag
     [Serializable]
     public class AnimParamsConfig
     {
-        public enum RefType
-        {
-            Animator,
-            Controller
-        }
-
-		[SerializeField]
-        protected RefType referenceType;
 		[SerializeField]
         protected string instanceId;
     }
