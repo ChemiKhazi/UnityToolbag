@@ -37,3 +37,25 @@ public class ExampleView : MonoBehaviour
 	}
 }
 ```
+
+Advanced Usage
+---
+
+If you want the popup to refer to an Animator outside the scope of your script, you have to add a `AnimParamsConfig` variable to your MonoBehaviour. This will allow you to configure in the inspector which `AnimatorController` the dropdowns will refer to, to get the parameter names.
+
+```C#
+public class AnimParameterConsumer : MonoBehaviour
+{
+	public AnimParamsConfig paramConfig;
+
+	// Note the `true` boolean after the name of the `AnimParamsConfig` property,
+	// this tells the script to use the config when displaying the parameters
+	[AnimParams("paramConfig", true)]
+	public string paramIdle;
+
+	[AnimParams("paramConfig", true)]
+	public string paramAttack;
+}
+```
+
+`AnimParamsConfig` does not retain a direct reference to the AnimatorController, instead it references it by the Unity instance ID which is not directly usable in runtime.
