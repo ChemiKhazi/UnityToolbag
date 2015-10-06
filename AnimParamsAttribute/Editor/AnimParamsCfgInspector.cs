@@ -1,5 +1,4 @@
-﻿using Mono.Cecil;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
