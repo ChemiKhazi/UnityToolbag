@@ -15,7 +15,6 @@ This repo is a host for any little Unity scripts I write that are simple and eas
 - [GameSaveSystem](GameSaveSystem) - A helper system for game saves to provide automatic backups and background thread processing along with better game save file paths.
 - [ImmediateWindow](ImmediateWindow) - An editor window that allows executing manual C# snippets.
 - [QuickToggle](QuickToggle) - Basic tool for locking objects in the scene to minimize accidental edits while working.
-- [ScriptableObjectUtility](ScriptableObjectUtility) - An editor class to help with creating `ScriptableObject` subclasses.
 - [SimpleSpriteAnimation](SimpleSpriteAnimation) - A very basic system for a simpler frame based animation for Unity's 2D system.
 - [SnapToSurface](SnapToSurface) - Editor tools to assist in positioning objects.
 - [SortingLayer](SortingLayer) - Tools for working with Unity's new sorting layers.

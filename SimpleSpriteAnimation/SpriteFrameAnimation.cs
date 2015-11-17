@@ -1,8 +1,8 @@
 using UnityEngine;
-using System.Collections;
 
 namespace UnityToolbag
 {
+    [CreateAssetMenu(order = 1000)]
     public class SpriteFrameAnimation : ScriptableObject
     {
         public bool loop;
