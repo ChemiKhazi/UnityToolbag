@@ -5,7 +5,7 @@ This attribute turns string properties into a popup of the parameters available 
 
 | Animator | Script | Inspector |
 |---|---|---|
-| ![Component](../READMEImg/AnimParamsAttr/AnimParams-Component.png) | ![Script](../READMEImg/AnimParamsAttr/AnimParams-Script.png) | ![Inspector](../READMEImg/AnimParamsAttr/AnimParams-Inspector.png) |
+| ![Component](AnimParamsAttr/AnimParams-Component.png) | ![Script](AnimParamsAttr/AnimParams-Script.png) | ![Inspector](AnimParamsAttr/AnimParams-Inspector.png) |
 
 Usage
 ---
