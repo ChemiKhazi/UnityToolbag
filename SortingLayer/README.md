@@ -7,7 +7,7 @@ Unity 4.3 added sorting layers and manual sorting orders to all renderers, howev
 SortingLayerExposed
 ---
 
-![Readme_SortingLayerExposed.png](https://raw.github.com/nickgravelyn/UnityToolbag/master/SortingLayer/Readme_SortingLayerExposed.png)
+![Readme_SortingLayerExposed.png](./Readme_SortingLayerExposed.png)
 
 This basic component+editor combo lets you change the sorting properties of _any_ renderer simply by putting the SortingLayerExposed component on the same object. The custom editor will provide you with the UI for choosing the sorting layer and sorting layer order for the renderer attached to the object.
 
@@ -25,7 +25,7 @@ If you want to change an object's sorting layer at runtime but want to configure
 
 This will appear in the inspector with a nice drop down for selecting the sorting layer:
 
-![Readme_SortingLayerAttribute.png](https://raw.github.com/nickgravelyn/UnityToolbag/master/SortingLayer/Readme_SortingLayerAttribute.png)
+![Readme_SortingLayerAttribute.png](./Readme_SortingLayerAttribute.png)
 
 Then you can use that sorting layer to update a renderer at runtime:
 
