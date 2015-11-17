@@ -14,13 +14,13 @@ This repo is a host for any little Unity scripts I write that are simple and eas
 - [Future](Future) - Simple implementation of the [future](http://en.wikipedia.org/wiki/Futures_and_promises) concept.
 - [GameSaveSystem](GameSaveSystem) - A helper system for game saves to provide automatic backups and background thread processing along with better game save file paths.
 - [ImmediateWindow](ImmediateWindow) - An editor window that allows executing manual C# snippets.
+- [QuickToggle](QuickToggle) - Basic tool for locking objects in the scene to minimize accidental edits while working.
 - [ScriptableObjectUtility](ScriptableObjectUtility) - An editor class to help with creating `ScriptableObject` subclasses.
 - [SimpleSpriteAnimation](SimpleSpriteAnimation) - A very basic system for a simpler frame based animation for Unity's 2D system.
 - [SnapToSurface](SnapToSurface) - Editor tools to assist in positioning objects.
 - [SortingLayer](SortingLayer) - Tools for working with Unity's new sorting layers.
 - [TimeScaleIndependentUpdate](TimeScaleIndependentUpdate) - Components to make it easier to continue animations when `Time.timeScale` is set to 0 (i.e. paused).
 - [UnityConstants](UnityConstants) - Tool for generating a C# script containing the names and values for tags, layers, sorting layers, and scenes.
-- [UnityLock](UnityLock) - Basic tool for locking objects in the scene to minimize accidental edits while working.
 
 ## Usage
 
