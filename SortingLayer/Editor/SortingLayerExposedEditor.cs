@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 
@@ -18,44 +19,22 @@ namespace UnityToolbag
                 return;
             }
 
-            var sortingLayerNames = SortingLayerHelper.sortingLayerNames;
+            var sortingLayerNames = SortingLayer.layers.Select(l => l.name).ToArray();
 
-            // If we have the sorting layers array, we can make a nice dropdown. For stability's sake, if the array is null
-            // we just use our old logic. This makes sure the script works in some fashion even if Unity changes the name of
-            // that internal field we reflected.
-            if (sortingLayerNames != null) {
-                // Look up the layer name using the current layer ID
-                string oldName = SortingLayerHelper.GetSortingLayerNameFromID(renderer.sortingLayerID);
+            // Look up the layer name using the current layer ID
+            string oldName = SortingLayer.IDToName(renderer.sortingLayerID);
 
-                // Use the name to look up our array index into the names list
-                int oldLayerIndex = Array.IndexOf(sortingLayerNames, oldName);
+            // Use the name to look up our array index into the names list
+            int oldLayerIndex = Array.IndexOf(sortingLayerNames, oldName);
 
-                // Show the popup for the names
-                int newLayerIndex = EditorGUILayout.Popup("Sorting Layer", oldLayerIndex, sortingLayerNames);
+            // Show the popup for the names
+            int newLayerIndex = EditorGUILayout.Popup("Sorting Layer", oldLayerIndex, sortingLayerNames);
 
-                // If the index changes, look up the ID for the new index to store as the new ID
-                if (newLayerIndex != oldLayerIndex) {
-                    Undo.RecordObject(renderer, "Edit Sorting Layer");
-                    renderer.sortingLayerID = SortingLayerHelper.GetSortingLayerIDForIndex(newLayerIndex);
-                    EditorUtility.SetDirty(renderer);
-                }
-            }
-            else {
-                // Expose the sorting layer name
-                string newSortingLayerName = EditorGUILayout.TextField("Sorting Layer Name", renderer.sortingLayerName);
-                if (newSortingLayerName != renderer.sortingLayerName) {
-                    Undo.RecordObject(renderer, "Edit Sorting Layer Name");
-                    renderer.sortingLayerName = newSortingLayerName;
-                    EditorUtility.SetDirty(renderer);
-                }
-
-                // Expose the sorting layer ID
-                int newSortingLayerId = EditorGUILayout.IntField("Sorting Layer ID", renderer.sortingLayerID);
-                if (newSortingLayerId != renderer.sortingLayerID) {
-                    Undo.RecordObject(renderer, "Edit Sorting Layer ID");
-                    renderer.sortingLayerID = newSortingLayerId;
-                    EditorUtility.SetDirty(renderer);
-                }
+            // If the index changes, look up the ID for the new index to store as the new ID
+            if (newLayerIndex != oldLayerIndex) {
+                Undo.RecordObject(renderer, "Edit Sorting Layer");
+                renderer.sortingLayerID = SortingLayer.NameToID(sortingLayerNames[newLayerIndex]);
+                EditorUtility.SetDirty(renderer);
             }
 
             // Expose the manual sorting order

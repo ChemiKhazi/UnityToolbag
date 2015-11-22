@@ -52,21 +52,16 @@ namespace UnityToolbag
                 writer.WriteLine();
 
                 // Write out sorting layers
-                var sortingLayerNames = SortingLayerHelper.sortingLayerNames;
-                if (sortingLayerNames != null) {
-                    writer.WriteLine("    public static class SortingLayers");
-                    writer.WriteLine("    {");
-                    for (int i = 0; i < sortingLayerNames.Length; i++) {
-                        var name = sortingLayerNames[i];
-                        int id = SortingLayerHelper.GetSortingLayerIDForName(name);
-                        writer.WriteLine("        /// <summary>");
-                        writer.WriteLine("        /// ID of sorting layer '{0}'.", name);
-                        writer.WriteLine("        /// </summary>");
-                        writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(name), id);
-                    }
-                    writer.WriteLine("    }");
-                    writer.WriteLine();
+                writer.WriteLine("    public static class SortingLayers");
+                writer.WriteLine("    {");
+                foreach (var layer in SortingLayer.layers) {
+                    writer.WriteLine("        /// <summary>");
+                    writer.WriteLine("        /// ID of sorting layer '{0}'.", layer.name);
+                    writer.WriteLine("        /// </summary>");
+                    writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(layer.name), layer.id);
                 }
+                writer.WriteLine("    }");
+                writer.WriteLine();
 
                 // Write out layers
                 writer.WriteLine("    public static class Layers");
