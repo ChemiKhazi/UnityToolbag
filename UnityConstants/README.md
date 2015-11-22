@@ -55,5 +55,3 @@ This is an example of what you'll see in `UnityConstants.cs`:
             public const int GameSaveSystemDemo = 2;
         }
     }
-
-UnityConstants does depend on the `SortingLayerHelper` class from the [SortingLayer](https://github.com/nickgravelyn/UnityToolbag/tree/master/SortingLayer) feature in order to get the names and IDs of the sorting layers.
