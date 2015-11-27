@@ -39,4 +39,4 @@ Feel free to contribute fixes, updates, or enhancements to the code via pull req
 
 ## Shameless Plug
 
-If you find any code in here to be useful and feel so inclined, you can help me out by picking up a copy of my company's first game [Shipwreck](http://brushfiregames.com/shipwreck). Absolutely not required (this code is free) but definitely appreciated. :)
+If you find any code in here to be useful and feel so inclined, you can help me out by purchasing a game from my company, [Brushfire Games](http://store.steampowered.com/search/?developer=Brushfire%20Games). Absolutely not required (this code is free) but definitely appreciated. :)
