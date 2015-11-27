@@ -1,6 +1,6 @@
 # UnityToolbag
 
-This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder has its own README to explain the usage in more depth than here. All scripts are being written with Unity 5.0 and may or may not work in earlier versions.
+This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder has its own README to explain the usage in more depth than here. All scripts are being written with the latest Unity 5 and may or may not work in earlier versions.
 
 
 ## Features
