@@ -4,8 +4,8 @@ On desktop platforms, Unity's `persistentDataPath` picks anywhere from less-than
 
 `StandardPaths` is a static class containing paths for Unity games to use for writing out files. It currently includes these paths:
 
-- `saveDataDirectory` is a directory path to use for user-specific data.
-- `configDirectory` is a directory path to use for settings/configuration.
+- `saveDataDirectory` is a directory path to use for user-specific save data.
+- `configDirectory` is a directory path to use for user-specific settings/configuration.
 - `logDirectory` is a directory path to use for custom log output.
 
 These are split apart for a couple reasons:
