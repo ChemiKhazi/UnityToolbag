@@ -12,7 +12,6 @@ This repo is a host for any little Unity scripts I write that are simple and eas
 - [ExclusiveChildren](ExclusiveChildren) - Helper script for managing objects in a hierarchy that represent mutually exclusive options (like a set of menu screens)
 - [Future](Future) - Simple implementation of the [future](http://en.wikipedia.org/wiki/Futures_and_promises) concept.
 - [GameSaveSystem](GameSaveSystem) - A helper system for game saves to provide automatic backups and background thread processing along with better game save file paths.
-- [ImmediateWindow](ImmediateWindow) - An editor window that allows executing manual C# snippets.
 - [QuickToggle](QuickToggle) - Basic tool for locking objects in the scene to minimize accidental edits while working.
 - [SimpleSpriteAnimation](SimpleSpriteAnimation) - A very basic system for a simpler frame based animation for Unity's 2D system.
 - [SnapToSurface](SnapToSurface) - Editor tools to assist in positioning objects.
