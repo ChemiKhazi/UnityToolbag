@@ -23,15 +23,9 @@ Simply clone the repository into the 'Assets' folder of a Unity project and you'
 
 Alternatively you can just cherry pick the features you want and copy only those folders into your project. Be careful, though, as some of the features may depend on others. See the individual feature README files to find out.
 
-Any component types are exposed through the component menu under UnityToolbag:
-
-![ComponentMenu.png](https://raw.github.com/nickgravelyn/UnityToolbag/master/ComponentMenu.png)
-
-
 ## Contributing
 
 Feel free to contribute fixes, updates, or enhancements to the code via pull request. New tools or utilities are welcome provided they are useful to a variety of people. Please read the [contribution guide](https://github.com/nickgravelyn/UnityToolbag/wiki/Contributing-Guide) for further details.
-
 
 ## Shameless Plug
 
