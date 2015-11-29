@@ -2,7 +2,6 @@
 
 This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder has its own README to explain the usage in more depth than here. All scripts are being written with Unity 5.0 and may or may not work in earlier versions.
 
-
 ## Features
 
 - [AnimParamsAttribute](AnimParamsAttribute) - A property attribute that exposes the parameters of an `Animator` as a popup in the inspector.
@@ -18,7 +17,6 @@ This repo is a host for any little Unity scripts I write that are simple and eas
 - [SimpleSpriteAnimation](SimpleSpriteAnimation) - A very basic system for a simpler frame based animation for Unity's 2D system.
 - [SnapToSurface](SnapToSurface) - Editor tools to assist in positioning objects.
 - [SortingLayer](SortingLayer) - Tools for working with Unity's new sorting layers.
-- [TimeScaleIndependentUpdate](TimeScaleIndependentUpdate) - Components to make it easier to continue animations when `Time.timeScale` is set to 0 (i.e. paused).
 - [UnityConstants](UnityConstants) - Tool for generating a C# script containing the names and values for tags, layers, sorting layers, and scenes.
 
 ## Usage
