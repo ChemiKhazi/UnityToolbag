@@ -10,11 +10,11 @@ This repo is a host for any little Unity scripts I write that are simple and eas
 - [DrawTitleSafeArea](DrawTitleSafeArea) - Simple component you add to a camera to render the title safe area.
 - [EditorTools](EditorTools) - Misc tools for making it easier to build editor UI.
 - [Future](Future) - Simple implementation of the [future](http://en.wikipedia.org/wiki/Futures_and_promises) concept.
-- [GameSaveSystem](GameSaveSystem) - A helper system for game saves to provide automatic backups and background thread processing along with better game save file paths.
 - [QuickToggle](QuickToggle) - Basic tool for locking objects in the scene to minimize accidental edits while working.
 - [SimpleSpriteAnimation](SimpleSpriteAnimation) - A very basic system for a simpler frame based animation for Unity's 2D system.
 - [SnapToSurface](SnapToSurface) - Editor tools to assist in positioning objects.
 - [SortingLayer](SortingLayer) - Tools for working with Unity's new sorting layers.
+- [StandardPaths](StandardPaths) - A static class that exposes better locations for saving files.
 - [UnityConstants](UnityConstants) - Tool for generating a C# script containing the names and values for tags, layers, sorting layers, and scenes.
 
 ## Usage
