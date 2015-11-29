@@ -1,6 +1,6 @@
 # UnityToolbag
 
-This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder has its own README to explain the usage in more depth than here. All scripts are being written with Unity 5.0 and may or may not work in earlier versions.
+This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder has its own README to explain the usage in more depth than here. All scripts are being written with the latest Unity 5 and may or may not work in earlier versions.
 
 ## Features
 
@@ -29,4 +29,4 @@ Feel free to contribute fixes, updates, or enhancements to the code via pull req
 
 ## Shameless Plug
 
-If you find any code in here to be useful and feel so inclined, you can help me out by picking up a copy of my company's first game [Shipwreck](http://brushfiregames.com/shipwreck). Absolutely not required (this code is free) but definitely appreciated. :)
+If you find any code in here to be useful and feel so inclined, you can help me out by purchasing a game from my company, [Brushfire Games](http://brushfiregames.com). Absolutely not required (this code is free) but definitely appreciated. :)
