@@ -13,7 +13,7 @@ This repo is a host for any little Unity scripts I write that are simple and eas
 - [SimpleSpriteAnimation](SimpleSpriteAnimation) - A very basic system for a simpler frame based animation for Unity's 2D system.
 - [SnapToSurface](SnapToSurface) - Editor tools to assist in positioning objects.
 - [SortingLayer](SortingLayer) - Tools for working with Unity's new sorting layers.
-- [StandardPaths](StandardPaths) - A static class that exposes better locations for saving files.
+- [StandardPaths](StandardPaths) - A static class that exposes good locations for saving files.
 - [UnityConstants](UnityConstants) - Tool for generating a C# script containing the names and values for tags, layers, sorting layers, and scenes.
 
 ## Usage

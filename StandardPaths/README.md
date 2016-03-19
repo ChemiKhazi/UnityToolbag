@@ -1,6 +1,6 @@
 # StandardPaths
 
-On desktop platforms, Unity's `persistentDataPath` picks anywhere from less-than-ideal to downright-wrong locations for where to put your files. `StandardPaths` is here to help.
+On desktop platforms, Unity's `persistentDataPath` doesn't always pick the best place for you to store files. `StandardPaths` is here to help.
 
 `StandardPaths` is a static class containing paths for Unity games to use for writing out files. It currently includes these paths:
 
