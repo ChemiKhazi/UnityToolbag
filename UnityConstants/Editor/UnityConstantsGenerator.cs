@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 namespace UnityToolbag
 {
@@ -91,12 +92,20 @@ namespace UnityToolbag
                 // Write out scenes
                 writer.WriteLine("    public static class Scenes");
                 writer.WriteLine("    {");
-                for (int i = 0; i < EditorBuildSettings.scenes.Length; i++) {
-                    string scene = Path.GetFileNameWithoutExtension(EditorBuildSettings.scenes[i].path);
+                int sceneIndex = 0;
+                foreach (var scene in EditorBuildSettings.scenes) {
+                    if (!scene.enabled) {
+                        continue;
+                    }
+
+                    var sceneName = Path.GetFileNameWithoutExtension(scene.path);
+
                     writer.WriteLine("        /// <summary>");
-                    writer.WriteLine("        /// ID of scene '{0}'.", scene);
+                    writer.WriteLine("        /// ID of scene '{0}'.", sceneName);
                     writer.WriteLine("        /// </summary>");
-                    writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(scene), i);
+                    writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(sceneName), sceneIndex);
+
+                    sceneIndex++;
                 }
                 writer.WriteLine("    }");
                 writer.WriteLine();
