@@ -2,6 +2,8 @@
 
 This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder has its own README to explain the usage in more depth than here. All scripts are being written with the latest Unity 5 and may or may not work in earlier versions.
 
+**NOTE**: I'm working to move more of these resources into separate projects under a group here on Github: [https://github.com/UnityCommunity](https://github.com/UnityCommunity). I think having one big project was nice but has some issues moving forward, namely I (Nick Gravelyn) am a big bottleneck. I'd like to see a group of people to manage projects in the UnityCommunity group rather than just myself so that no one person is stopping bug fixes, etc.
+
 ## Features
 
 - [AnimParamsAttribute](AnimParamsAttribute) - A property attribute that exposes the parameters of an `Animator` as a popup in the inspector.
