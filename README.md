@@ -1,8 +1,8 @@
+**NOTE**: Development in UnityToolbag is likely to be considered done. I've instead split up the project into multiple repositories under a new group: [https://github.com/UnityCommunity](https://github.com/UnityCommunity). This new group will allow us to build a community of folks to maintain the scripts/tools so that I don't become a bottleneck.
+
 # UnityToolbag
 
 This repo is a host for any little Unity scripts I write that are simple and easy for others to leverage. Each folder has its own README to explain the usage in more depth than here. All scripts are being written with the latest Unity 5 and may or may not work in earlier versions.
-
-**NOTE**: I'm working to move more of these resources into separate projects under a group here on Github: [https://github.com/UnityCommunity](https://github.com/UnityCommunity). I think having one big project was nice but has some issues moving forward, namely I (Nick Gravelyn) am a big bottleneck. I'd like to see a group of people to manage projects in the UnityCommunity group rather than just myself so that no one person is stopping bug fixes, etc.
 
 ## Features
 
