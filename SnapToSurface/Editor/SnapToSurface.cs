@@ -7,7 +7,7 @@ namespace UnityToolbag
     {
         void OnGUI()
         {
-            using (new HorizontalBlock()) {
+            using (new GUILayout.HorizontalScope()) {
                 if (GUILayout.Button("X")) {
                     Drop(new Vector3(1, 0, 0));
                 }
@@ -19,7 +19,7 @@ namespace UnityToolbag
                 }
             }
 
-            using (new HorizontalBlock()) {
+            using (new GUILayout.HorizontalScope()) {
                 if (GUILayout.Button("-X")) {
                     Drop(new Vector3(-1, 0, 0));
                 }
