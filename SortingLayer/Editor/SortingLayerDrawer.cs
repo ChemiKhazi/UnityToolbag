@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System;
+using System.Linq;
 
 namespace UnityToolbag
 {
@@ -9,7 +10,7 @@ namespace UnityToolbag
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var sortingLayerNames = SortingLayerHelper.sortingLayerNames;
+            var sortingLayerNames = SortingLayer.layers.Select(l => l.name).ToArray();
             if (property.propertyType != SerializedPropertyType.Integer) {
                 EditorGUI.HelpBox(position, string.Format("{0} is not an integer but has [SortingLayer].", property.name), MessageType.Error);
             }
@@ -17,7 +18,7 @@ namespace UnityToolbag
                 EditorGUI.BeginProperty(position, label, property);
 
                 // Look up the layer name using the current layer ID
-                string oldName = SortingLayerHelper.GetSortingLayerNameFromID(property.intValue);
+                string oldName = SortingLayer.IDToName(property.intValue);
 
                 // Use the name to look up our array index into the names list
                 int oldLayerIndex = Array.IndexOf(sortingLayerNames, oldName);
@@ -27,7 +28,7 @@ namespace UnityToolbag
 
                 // If the index changes, look up the ID for the new index to store as the new ID
                 if (newLayerIndex != oldLayerIndex) {
-                    property.intValue = SortingLayerHelper.GetSortingLayerIDForIndex(newLayerIndex);
+                    property.intValue = SortingLayer.NameToID(sortingLayerNames[newLayerIndex]);
                 }
 
                 EditorGUI.EndProperty();

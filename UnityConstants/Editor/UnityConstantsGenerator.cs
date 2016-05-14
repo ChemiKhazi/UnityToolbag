@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 namespace UnityToolbag
 {
@@ -52,21 +53,16 @@ namespace UnityToolbag
                 writer.WriteLine();
 
                 // Write out sorting layers
-                var sortingLayerNames = SortingLayerHelper.sortingLayerNames;
-                if (sortingLayerNames != null) {
-                    writer.WriteLine("    public static class SortingLayers");
-                    writer.WriteLine("    {");
-                    for (int i = 0; i < sortingLayerNames.Length; i++) {
-                        var name = sortingLayerNames[i];
-                        int id = SortingLayerHelper.GetSortingLayerIDForName(name);
-                        writer.WriteLine("        /// <summary>");
-                        writer.WriteLine("        /// ID of sorting layer '{0}'.", name);
-                        writer.WriteLine("        /// </summary>");
-                        writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(name), id);
-                    }
-                    writer.WriteLine("    }");
-                    writer.WriteLine();
+                writer.WriteLine("    public static class SortingLayers");
+                writer.WriteLine("    {");
+                foreach (var layer in SortingLayer.layers) {
+                    writer.WriteLine("        /// <summary>");
+                    writer.WriteLine("        /// ID of sorting layer '{0}'.", layer.name);
+                    writer.WriteLine("        /// </summary>");
+                    writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(layer.name), layer.id);
                 }
+                writer.WriteLine("    }");
+                writer.WriteLine();
 
                 // Write out layers
                 writer.WriteLine("    public static class Layers");
@@ -96,12 +92,20 @@ namespace UnityToolbag
                 // Write out scenes
                 writer.WriteLine("    public static class Scenes");
                 writer.WriteLine("    {");
-                for (int i = 0; i < EditorBuildSettings.scenes.Length; i++) {
-                    string scene = Path.GetFileNameWithoutExtension(EditorBuildSettings.scenes[i].path);
+                int sceneIndex = 0;
+                foreach (var scene in EditorBuildSettings.scenes) {
+                    if (!scene.enabled) {
+                        continue;
+                    }
+
+                    var sceneName = Path.GetFileNameWithoutExtension(scene.path);
+
                     writer.WriteLine("        /// <summary>");
-                    writer.WriteLine("        /// ID of scene '{0}'.", scene);
+                    writer.WriteLine("        /// ID of scene '{0}'.", sceneName);
                     writer.WriteLine("        /// </summary>");
-                    writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(scene), i);
+                    writer.WriteLine("        public const int {0} = {1};", MakeSafeForCode(sceneName), sceneIndex);
+
+                    sceneIndex++;
                 }
                 writer.WriteLine("    }");
                 writer.WriteLine();

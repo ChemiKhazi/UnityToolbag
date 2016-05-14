@@ -14,9 +14,9 @@ namespace UnityToolbag
 
         static QuickToggle()
         {
-            // No editor prefs yet...
-            if (EditorPrefs.HasKey(PrefKeyShowToggle) == false)
-                EditorPrefs.SetBool(PrefKeyShowToggle, true);
+            if (EditorPrefs.HasKey(PrefKeyShowToggle) == false) {
+                EditorPrefs.SetBool(PrefKeyShowToggle, false);
+            }
 
             ShowQuickToggle(EditorPrefs.GetBool(PrefKeyShowToggle));
         }
