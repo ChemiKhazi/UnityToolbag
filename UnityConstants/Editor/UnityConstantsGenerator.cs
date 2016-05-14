@@ -3,7 +3,9 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
+#if UNITY_5_3_4
 using UnityEngine.SceneManagement;
+#endif
 
 namespace UnityToolbag
 {
