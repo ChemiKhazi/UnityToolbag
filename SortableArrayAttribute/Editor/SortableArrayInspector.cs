@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -9,6 +10,9 @@ namespace UnityToolbag
 	[CanEditMultipleObjects]
 	public class SortableArrayInspector : Editor
 	{
+		// Set this to true to turn every array in non custom inspectors into reorderable lists
+		private const bool LIST_ALL_ARRAYS = false;
+
 		protected static string GetGrandParentPath(SerializedProperty property)
 		{
 			string parent = property.propertyPath;
@@ -20,6 +24,10 @@ namespace UnityToolbag
 			return parent;
 		}
 
+		/// <summary>
+		/// Internal class that manages ReorderableLists for each reorderable
+		/// SerializedProperty in a SerializedObject's direct child
+		/// </summary>
 		protected class SortableListData
 		{
 			public string Parent		{ get; private set; }
@@ -33,34 +41,55 @@ namespace UnityToolbag
 
 			public void AddProperty(SerializedProperty property)
 			{
+				// Check if this property actually belongs to the same direct child
 				if (GetGrandParentPath(property).Equals(Parent) == false)
 					return;
 
-				ReorderableList list = new ReorderableList(property.serializedObject, property,
-														draggable:true, displayHeader:false,
-														displayAddButton:true, displayRemoveButton:true);
+				ReorderableList propList = new ReorderableList(
+					property.serializedObject, property,
+					draggable: true, displayHeader: false,
+					displayAddButton: true, displayRemoveButton: true)
+				{
+					headerHeight = 5
+				};
 				
-				list.drawElementCallback = delegate(Rect rect, int index, bool active, bool focused)
+				propList.drawElementCallback = delegate(Rect rect, int index, bool active, bool focused)
 				{
 					SerializedProperty targetElement = property.GetArrayElementAtIndex(index);
-					rect.height = EditorGUI.GetPropertyHeight(targetElement);
-					EditorGUI.PropertyField(rect, targetElement);
-
-#if UNITY_5_1 || UNITY_5_2
-					list.elementHeight = Mathf.Max(rect.height, EditorGUIUtility.singleLineHeight);
-#endif
-				};
+					bool isExpanded = targetElement.isExpanded;
+					rect.height = EditorGUI.GetPropertyHeight(targetElement, GUIContent.none, isExpanded);
 
 #if UNITY_5_3 || UNITY_5_4
-				list.elementHeightCallback = delegate(int index)
+					if (targetElement.hasVisibleChildren)
+						rect.xMin += 10;
+#endif
+
+					// Get Unity to handle drawing each element
+					EditorGUI.PropertyField(rect, targetElement, isExpanded);
+
+					// Height might have changed when dealing with serialized class
+					// Call the select callback when height changes to reset the list elementHeight
+					float newHeight = EditorGUI.GetPropertyHeight(targetElement, GUIContent.none, targetElement.isExpanded);
+					if (rect.height != newHeight)
+						propList.onSelectCallback(propList);
+				};
+
+				propList.onSelectCallback = delegate(ReorderableList list)
+				{
+					SerializedProperty targetElement = property.GetArrayElementAtIndex(list.index);
+					list.elementHeight = EditorGUI.GetPropertyHeight(targetElement, GUIContent.none, targetElement.isExpanded);
+				};
+
+				// Unity 5.3 onwards allows reorderable lists to have variable element heights
+#if UNITY_5_3 || UNITY_5_4
+				propList.elementHeightCallback = delegate(int index)
 				{
 					SerializedProperty arrayElement = property.GetArrayElementAtIndex(index);
-					return EditorGUI.GetPropertyHeight(arrayElement);
+					return EditorGUI.GetPropertyHeight(arrayElement, GUIContent.none, arrayElement.isExpanded);
 				};
 #endif
 
-
-				propIndex.Add(property.propertyPath, list);
+				propIndex.Add(property.propertyPath, propList);
 			}
 
 			public bool DoLayoutProperty(SerializedProperty property)
@@ -68,17 +97,20 @@ namespace UnityToolbag
 				if (propIndex.ContainsKey(property.propertyPath) == false)
 					return false;
 
+				// Draw the header
 				string headerText = string.Format("{0} [{1}]", property.displayName, property.arraySize);
 				EditorGUILayout.PropertyField(property, new GUIContent(headerText), false);
 				
+				// Save header rect for handling drag and drop
 				Rect dropRect = GUILayoutUtility.GetLastRect();
 
+				// Draw the reorderable list for the property
 				if (property.isExpanded)
 				{
 					propIndex[property.propertyPath].DoLayoutList();
 				}
 
-				// Handle drag and drop
+				// Handle drag and drop into the header
 				Event evt = Event.current;
 				if (evt == null)
 					return true;
@@ -96,14 +128,16 @@ namespace UnityToolbag
 						{
 							if (dragged_object.GetType() != property.GetType())
 								continue;
+
 							int newIndex = property.arraySize;
 							property.arraySize++;
-							property.GetArrayElementAtIndex(newIndex).objectReferenceInstanceIDValue = dragged_object.GetInstanceID();
+
+							SerializedProperty target = property.GetArrayElementAtIndex(newIndex);
+							target.objectReferenceInstanceIDValue = dragged_object.GetInstanceID();
 						}
 						evt.Use();
 					}
 				}
-
 				return true;
 			}
 
@@ -113,23 +147,24 @@ namespace UnityToolbag
 					return propIndex[property.propertyPath];
 				return null;
 			}
-		}
+		} // End SortableListData
 
 		protected List<SortableListData> listIndex;
 
 		protected bool isInitialized = false;
 		protected bool hasSortableArrays = false;
 
-		private void OnEnable()
-		{
-			InitInspector();
-		}
-
 		~SortableArrayInspector()
 		{
 			listIndex.Clear();
 			isInitialized = false;
 			hasSortableArrays = false;
+		}
+
+		#region Initialization
+		private void OnEnable()
+		{
+			InitInspector();
 		}
 
 		protected virtual void InitInspector()
@@ -148,7 +183,13 @@ namespace UnityToolbag
 				{
 					if (iterProp.isArray && iterProp.propertyType != SerializedPropertyType.String)
 					{
-						if (iterProp.HasAttribute<SortableArrayAttribute>())
+						bool canTurnToList = true;
+						// If not going to list all arrays
+						// Use SerializedPropExtension to check for attribute
+						if (LIST_ALL_ARRAYS == false)
+							canTurnToList = iterProp.HasAttribute<SortableArrayAttribute>();
+
+						if (canTurnToList)
 						{
 							hasSortableArrays = true;
 							CreateListData(serializedObject.FindProperty(iterProp.propertyPath));
@@ -168,6 +209,7 @@ namespace UnityToolbag
 		{
 			string parent = GetGrandParentPath(property);
 
+			// Try to find the grand parent in SortableListData
 			SortableListData data = listIndex.Find(listData => listData.Parent.Equals(parent));
 			if (data == null)
 			{
@@ -177,14 +219,17 @@ namespace UnityToolbag
 
 			data.AddProperty(property);
 		}
+		#endregion
 
 		public override void OnInspectorGUI()
 		{
+			// Not initialized, try initializing
 			if (listIndex == null)
 				InitInspector();
 
 			if (hasSortableArrays && listIndex != null)
 			{
+				serializedObject.Update();
 				DrawDefaultSortable();
 				serializedObject.ApplyModifiedProperties();
 				return;
@@ -197,7 +242,7 @@ namespace UnityToolbag
 		{
 			if (property.NextVisible(true))
 			{
-				// Remember this iteration is at
+				// Remember depth iteration started from
 				int depth = property.Copy().depth;
 				do
 				{
@@ -210,6 +255,11 @@ namespace UnityToolbag
 			}
 		}
 
+		/// <summary>
+		/// Draw a SerializedProperty as a ReorderableList if it was found during
+		/// initialization, otherwise use EditorGUILayout.PropertyField
+		/// </summary>
+		/// <param name="property"></param>
 		protected void DrawPropertySortableArray(SerializedProperty property)
 		{
 			// Try to get the sortable list this property belongs to
@@ -238,12 +288,37 @@ namespace UnityToolbag
 		}
 
 		#region Helper functions
+		/// <summary>
+		/// Draw the default inspector, with the sortable arrays
+		/// </summary>
 		protected void DrawDefaultSortable()
 		{
 			SerializedProperty iterProp = serializedObject.GetIterator();
 			IterateSerializedProp(iterProp);
 		}
 
+		/// <summary>
+		/// Draw the default inspector, except for the given property names
+		/// </summary>
+		/// <param name="propertyNames"></param>
+		protected void DrawSortableExcept(params string[] propertyNames)
+		{
+			SerializedProperty iterProp = serializedObject.GetIterator();
+			if (iterProp.NextVisible(true))
+			{
+				do
+				{
+					if (propertyNames.Contains(iterProp.name))
+						continue;
+					DrawPropertySortableArray(iterProp);
+				} while (iterProp.NextVisible(false));
+			}
+		}
+
+		/// <summary>
+		/// Draw the default inspector, starting from a given property
+		/// </summary>
+		/// <param name="propertyStart">Property name to start from</param>
 		protected void DrawPropertiesFrom(string propertyStart)
 		{
 			bool canDraw = false;
@@ -264,6 +339,10 @@ namespace UnityToolbag
 			}
 		}
 
+		/// <summary>
+		/// Draw the default inspector, up to a given property
+		/// </summary>
+		/// <param name="propertyStop">Property name to stop at</param>
 		protected void DrawPropertiesUpTo(string propertyStop)
 		{
 			SerializedProperty iterProp = serializedObject.GetIterator();
@@ -278,6 +357,11 @@ namespace UnityToolbag
 			}
 		}
 
+		/// <summary>
+		/// Draw the default inspector, starting from a given property to a stopping property
+		/// </summary>
+		/// <param name="propertyStart">Property name to start from</param>
+		/// <param name="propertyStop">Property name to stop at</param>
 		protected void DrawPropertiesFromUpTo(string propertyStart, string propertyStop)
 		{
 			bool canDraw = false;
