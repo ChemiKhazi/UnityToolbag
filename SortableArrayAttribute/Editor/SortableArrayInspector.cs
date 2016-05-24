@@ -59,10 +59,8 @@ namespace UnityToolbag
 					bool isExpanded = targetElement.isExpanded;
 					rect.height = EditorGUI.GetPropertyHeight(targetElement, GUIContent.none, isExpanded);
 
-#if UNITY_5_3 || UNITY_5_4
 					if (targetElement.hasVisibleChildren)
 						rect.xMin += 10;
-#endif
 
 					// Get Unity to handle drawing each element
 					EditorGUI.PropertyField(rect, targetElement, isExpanded);
@@ -71,7 +69,12 @@ namespace UnityToolbag
 					// Call the select callback when height changes to reset the list elementHeight
 					float newHeight = EditorGUI.GetPropertyHeight(targetElement, GUIContent.none, targetElement.isExpanded);
 					if (rect.height != newHeight)
+					{
 						propList.onSelectCallback(propList);
+#if UNITY_5_1 || UNITY_5_2
+						propList.elementHeight = Mathf.Max(propList.elementHeight, newHeight);
+#endif
+					}
 				};
 
 				propList.onSelectCallback = delegate(ReorderableList list)
