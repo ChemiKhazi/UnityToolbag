@@ -222,6 +222,20 @@ namespace UnityToolbag
 
 			data.AddProperty(property);
 		}
+
+		protected ReorderableList GetSortableList(SerializedProperty property)
+		{
+			if (listIndex == null)
+				return null;
+
+			string parent = GetGrandParentPath(property);
+
+			SortableListData data = listIndex.Find(listData => listData.Parent.Equals(parent));
+			if (data == null)
+				return null;
+
+			return data.GetPropertyList(property);
+		}
 		#endregion
 
 		public override void OnInspectorGUI()
