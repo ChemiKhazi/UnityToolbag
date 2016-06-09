@@ -211,6 +211,9 @@ namespace UnityToolbag
 		public static object[] GetAttributes<T>(this SerializedProperty prop)
 		{
 			object obj = GetParent<object>(prop);
+			if (obj == null)
+				return null;
+
 			Type objType = obj.GetType();
 			const BindingFlags bindingFlags = System.Reflection.BindingFlags.GetField
 			                                  | System.Reflection.BindingFlags.GetProperty
