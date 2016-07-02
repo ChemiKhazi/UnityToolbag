@@ -5,6 +5,7 @@ This repo is a host for any little Unity scripts I write that are simple and eas
 ## Features
 
 - [AnimParamsAttribute](AnimParamsAttribute) - A property attribute that exposes the parameters of an `Animator` as a popup in the inspector.
+- [SortableArray](SortableArrayAttribute) - A property attribute that displays arrays/lists as a ReorderableList in the inspector.
 - [CacheBehaviour](CacheBehaviour) - A drop-in replacement for `MonoBehaviour` as a script base class that provides caching of all standard properties.
 - [Dispatcher](Dispatcher) - Provides a mechanism for invoking code on the main thread from background threads.
 - [DrawTitleSafeArea](DrawTitleSafeArea) - Simple component you add to a camera to render the title safe area.
