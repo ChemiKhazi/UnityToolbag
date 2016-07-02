@@ -22,7 +22,8 @@ namespace UnityToolbag
         {
             bool toggle = EditorPrefs.GetBool(PrefKeyShowToggle);
             ShowQuickToggle(!toggle);
-        }
+			Menu.SetChecked(MENU_NAME, !toggle);
+		}
 		#endregion
 
 	    static QuickToggle()
@@ -35,15 +36,15 @@ namespace UnityToolbag
 		    HierarchyWindowType = editorAssembly.GetType("UnityEditor.SceneHierarchyWindow");
 
 			ResetVars();
-		    ShowQuickToggle(EditorPrefs.GetBool(PrefKeyShowToggle));
+		    bool toggleIsOn = EditorPrefs.GetBool(PrefKeyShowToggle);
+            ShowQuickToggle(toggleIsOn);
 	    }
 
 	    private static void ShowQuickToggle(bool show)
 		{
-			Menu.SetChecked(MENU_NAME, show);
 			EditorPrefs.SetBool(PrefKeyShowToggle, show);
 
-            if (show)
+		    if (show)
             {
 				ResetVars();
 				EditorApplication.update += HandleEditorUpdate;
@@ -97,7 +98,7 @@ namespace UnityToolbag
 				    window.wantsMouseMove = true;
 
 			    isFrameFresh = true;
-		    }
+			}
 	    }
 
 	    private static void DrawHierarchyItem(int instanceId, Rect selectionRect)
