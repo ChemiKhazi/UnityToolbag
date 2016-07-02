@@ -1,5 +1,7 @@
-﻿﻿using System.Collections.Generic;
-using UnityEditor;
+﻿﻿using System;
+﻿using System.Collections.Generic;
+﻿using System.Reflection;
+﻿using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -10,41 +12,93 @@ namespace UnityToolbag
     {
         private const string PrefKeyShowToggle = "UnityToolbag.QuickToggle.Visible";
 
-        private static GUIStyle styleLock, styleLockUnselected, styleVisible;
+		private static readonly Type HierarchyWindowType;
+		private static GUIStyle styleLock, styleLockUnselected, styleVisOn, styleVisOff;
 
-        static QuickToggle()
-        {
-            if (EditorPrefs.HasKey(PrefKeyShowToggle) == false) {
-                EditorPrefs.SetBool(PrefKeyShowToggle, false);
-            }
-
-            ShowQuickToggle(EditorPrefs.GetBool(PrefKeyShowToggle));
-        }
-
-        [MenuItem("Window/Hierarchy Quick Toggle")]
+		#region Menu stuff
+	    [MenuItem("Window/Hierarchy Quick Toggle")]
         static void QuickToggleMenu()
         {
             bool toggle = EditorPrefs.GetBool(PrefKeyShowToggle);
             ShowQuickToggle(!toggle);
         }
+		#endregion
 
-        private static void ShowQuickToggle(bool show)
+	    static QuickToggle()
+	    {
+		    if (EditorPrefs.HasKey(PrefKeyShowToggle) == false) {
+			    EditorPrefs.SetBool(PrefKeyShowToggle, false);
+		    }
+
+		    Assembly editorAssembly = typeof(EditorWindow).Assembly;
+		    HierarchyWindowType = editorAssembly.GetType("UnityEditor.SceneHierarchyWindow");
+
+			ResetVars();
+		    ShowQuickToggle(EditorPrefs.GetBool(PrefKeyShowToggle));
+	    }
+
+	    private static void ShowQuickToggle(bool show)
         {
             EditorPrefs.SetBool(PrefKeyShowToggle, show);
 
             if (show)
             {
+				ResetVars();
+				EditorApplication.update += HandleEditorUpdate;
                 EditorApplication.hierarchyWindowItemOnGUI += DrawHierarchyItem;
             }
             else
-            {
+			{
+				EditorApplication.update -= HandleEditorUpdate;
                 EditorApplication.hierarchyWindowItemOnGUI -= DrawHierarchyItem;
             }
-
             EditorApplication.RepaintHierarchyWindow();
         }
 
-        private static void DrawHierarchyItem(int instanceId, Rect selectionRect)
+	    private struct ObjectState
+	    {
+		    public bool visible;
+		    public bool locked;
+
+		    public ObjectState(bool visible, bool locked)
+		    {
+			    this.visible = visible;
+			    this.locked = locked;
+		    }
+	    }
+
+	    private static ObjectState	propogateState;
+
+		// Because we can't hook into OnGUI of HierarchyWindow, doing a hack
+		// button that involves the editor update loop and the hierarchy item draw event
+		private static bool	isFrameFresh;
+	    private static bool	isMousePressed;
+
+	    private static void ResetVars()
+	    {
+		    isFrameFresh = false;
+		    isMousePressed = false;
+	    }
+
+	    private static void HandleEditorUpdate()
+	    {   
+		    EditorWindow window = EditorWindow.mouseOverWindow;
+		    if (window == null)
+		    {
+				ResetVars();
+			    return;
+		    }
+
+		    if (window.GetType() == HierarchyWindowType)
+		    {
+			    if (window.wantsMouseMove == false)
+				    window.wantsMouseMove = true;
+
+			    isFrameFresh = true;
+		    }
+	    }
+
+	    private static void DrawHierarchyItem(int instanceId, Rect selectionRect)
         {
             BuildStyles();
 
@@ -63,24 +117,65 @@ namespace UnityToolbag
                 xMin = selectionRect.xMax - selectionRect.height
             };
 
-            // Draw the visibility toggle
-            bool isActive = target.activeSelf;
-            if (isActive != GUI.Toggle(visRect, isActive, GUIContent.none, styleVisible))
-            {
-                SetVisible(target, !isActive);
-                EditorApplication.RepaintHierarchyWindow();
-            }
+			// Get states
+			bool isActive = target.activeSelf;
+			bool isLocked = (target.hideFlags & HideFlags.NotEditable) > 0;
+			
+			// Draw the visibility toggle
+		    GUIStyle visStyle = (isActive) ? styleVisOn : styleVisOff;
+			GUI.Label(visRect, GUIContent.none, visStyle);
 
-            // Draw lock toggle
-            bool isLocked = (target.hideFlags & HideFlags.NotEditable) > 0;
-            // Decide which GUIStyle to use for the button
-            // If this item is currently selected, show the visible lock style, if not, invisible lock style
-            GUIStyle lockStyle = (Selection.activeInstanceID == instanceId) ? styleLock : styleLockUnselected;
-            if (isLocked != GUI.Toggle(lockRect, isLocked, GUIContent.none, lockStyle))
-            {
-                SetLockObject(target, !isLocked);
-                EditorApplication.RepaintHierarchyWindow();
-            }
+			// Draw lock toggle
+			GUIStyle lockStyle = (isLocked) ? styleLock : styleLockUnselected;
+			GUI.Label(lockRect, GUIContent.none, lockStyle);
+
+		    if (Event.current == null)
+			    return;
+
+			Event evt = Event.current;
+
+			bool toggleActive = visRect.Contains(evt.mousePosition);
+			bool toggleLock = lockRect.Contains(evt.mousePosition);
+			bool stateChanged = (toggleActive || toggleLock);
+				
+			bool doMouse = false;
+			switch (evt.type)
+			{
+				case EventType.MouseDown:
+					// Checking is frame fresh so mouse state is only tested once per frame
+					// instead of every time a hierarchy item is drawn
+					bool isMouseDown = false;
+					if (isFrameFresh && stateChanged)
+					{
+						isMouseDown = !isMousePressed;
+						isMousePressed = true;
+						isFrameFresh = false;
+					}
+
+					if (stateChanged && isMouseDown)
+					{
+						doMouse = true;
+						if (toggleActive) isActive = !isActive;
+						if (toggleLock) isLocked = !isLocked;
+
+						propogateState = new ObjectState(isActive, isLocked);
+						evt.Use();
+					}
+					break;
+				case EventType.MouseDrag:
+					doMouse = isMousePressed;
+					break;
+				case EventType.MouseUp:
+					ResetVars();
+					break;
+			}
+				
+			if (doMouse && stateChanged)
+			{
+				SetVisible(target, propogateState.visible);
+				SetLockObject(target, propogateState.locked);
+				EditorApplication.RepaintHierarchyWindow();
+			}
         }
 
         private static Object[] GatherObjects(GameObject root)
@@ -101,7 +196,11 @@ namespace UnityToolbag
 
         private static void SetLockObject(GameObject target, bool isLocked)
         {
-            Object[] objects = GatherObjects(target);
+	        bool objectLockState = (target.hideFlags & HideFlags.NotEditable) > 0;
+            if (objectLockState == isLocked)
+		        return;
+
+	        Object[] objects = GatherObjects(target);
             string undoString = string.Format("{0} {1}", isLocked ? "Lock" : "Unlock", target.name);
             Undo.RecordObjects(objects, undoString);
 
@@ -143,6 +242,8 @@ namespace UnityToolbag
 
         private static void SetVisible(GameObject target, bool isActive)
         {
+			if (target.activeSelf == isActive) return;
+	        
             string undoString = string.Format("{0} {1}",
                                         isActive ? "Show" : "Hide",
                                         target.name);
@@ -157,14 +258,14 @@ namespace UnityToolbag
             // All of the styles have been built, don't do anything
             if (styleLock != null &&
                 styleLockUnselected != null &&
-                styleVisible != null)
+                styleVisOn != null &&
+				styleVisOff != null)
             {
                 return;
             }
 
             // First, get the textures for the GUIStyles
-            Texture2D icnLockOn = null,
-                    icnLockOnActive = null;
+            Texture2D icnLockOn = null, icnLockOnActive = null;
             bool normalPassed = false;
             bool activePassed = false;
 
@@ -221,7 +322,14 @@ namespace UnityToolbag
                 focused = tempStyle.focused
             };
 
-            styleVisible = new GUIStyle(GUI.skin.FindStyle("VisibilityToggle"));
+	        tempStyle = GUI.skin.FindStyle("VisibilityToggle");
+			styleVisOff = new GUIStyle(tempStyle);
+			
+            styleVisOn = new GUIStyle(tempStyle)
+            {
+				normal = new GUIStyleState() { background = tempStyle.onNormal.background }
+            };
+
         }
     }
 }
