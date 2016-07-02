@@ -11,12 +11,13 @@ namespace UnityToolbag
     public class QuickToggle
     {
         private const string PrefKeyShowToggle = "UnityToolbag.QuickToggle.Visible";
+	    private const string MENU_NAME = "Window/Hierarchy Quick Toggle";
 
-		private static readonly Type HierarchyWindowType;
+        private static readonly Type HierarchyWindowType;
 		private static GUIStyle styleLock, styleLockUnselected, styleVisOn, styleVisOff;
 
 		#region Menu stuff
-	    [MenuItem("Window/Hierarchy Quick Toggle")]
+	    [MenuItem(MENU_NAME)]
         static void QuickToggleMenu()
         {
             bool toggle = EditorPrefs.GetBool(PrefKeyShowToggle);
@@ -38,8 +39,9 @@ namespace UnityToolbag
 	    }
 
 	    private static void ShowQuickToggle(bool show)
-        {
-            EditorPrefs.SetBool(PrefKeyShowToggle, show);
+		{
+			Menu.SetChecked(MENU_NAME, show);
+			EditorPrefs.SetBool(PrefKeyShowToggle, show);
 
             if (show)
             {
