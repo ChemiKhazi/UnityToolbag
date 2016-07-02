@@ -59,17 +59,17 @@ namespace UnityToolbag
 
 	    private struct ObjectState
 	    {
-		    public bool visible;
-		    public bool locked;
+		    public bool propagateVisibility;
+		    public bool propagateValue;
 
-		    public ObjectState(bool visible, bool locked)
+		    public ObjectState(bool propagateVisibility, bool propagateValue)
 		    {
-			    this.visible = visible;
-			    this.locked = locked;
+			    this.propagateVisibility = propagateVisibility;
+			    this.propagateValue = propagateValue;
 		    }
 	    }
 
-	    private static ObjectState	propogateState;
+	    private static ObjectState	propagateState;
 
 		// Because we can't hook into OnGUI of HierarchyWindow, doing a hack
 		// button that involves the editor update loop and the hierarchy item draw event
@@ -160,13 +160,16 @@ namespace UnityToolbag
 						if (toggleActive) isActive = !isActive;
 						if (toggleLock) isLocked = !isLocked;
 
-						propogateState = new ObjectState(isActive, isLocked);
+						propagateState = new ObjectState(toggleActive, (toggleActive) ? isActive : isLocked);
 						evt.Use();
 					}
 					break;
 				case EventType.MouseDrag:
 					doMouse = isMousePressed;
 					break;
+				case EventType.DragPerform:
+				case EventType.DragExited:
+				case EventType.DragUpdated:
 				case EventType.MouseUp:
 					ResetVars();
 					break;
@@ -174,8 +177,11 @@ namespace UnityToolbag
 				
 			if (doMouse && stateChanged)
 			{
-				SetVisible(target, propogateState.visible);
-				SetLockObject(target, propogateState.locked);
+				if (propagateState.propagateVisibility)
+					SetVisible(target, propagateState.propagateValue);
+				else
+					SetLockObject(target, propagateState.propagateValue);
+				
 				EditorApplication.RepaintHierarchyWindow();
 			}
         }
@@ -203,12 +209,12 @@ namespace UnityToolbag
 		        return;
 
 	        Object[] objects = GatherObjects(target);
-            string undoString = string.Format("{0} {1}", isLocked ? "Lock" : "Unlock", target.name);
-            Undo.RecordObjects(objects, undoString);
-
+			
             foreach (Object obj in objects)
             {
                 GameObject go = (GameObject)obj;
+				string undoString = string.Format("{0} {1}", isLocked ? "Lock" : "Unlock", go.name);
+				Undo.RecordObject(go, undoString);
 
                 // Set state according to isLocked
                 if (isLocked)
@@ -225,7 +231,7 @@ namespace UnityToolbag
                 {
                     if (comp is Transform)
                         continue;
-
+					Undo.RecordObject(comp, undoString);
                     if (isLocked)
                     {
                         comp.hideFlags |= HideFlags.NotEditable;
@@ -238,8 +244,9 @@ namespace UnityToolbag
                     }
                     EditorUtility.SetDirty(comp);
                 }
-                EditorUtility.SetDirty(obj);
+                EditorUtility.SetDirty(go);
             }
+			Undo.IncrementCurrentGroup();
         }
 
         private static void SetVisible(GameObject target, bool isActive)
