@@ -10,39 +10,96 @@ namespace UnityToolbag
     [InitializeOnLoad]
     public class QuickToggle
     {
-        private const string PrefKeyShowToggle = "UnityToolbag.QuickToggle.Visible";
-	    private const string MENU_NAME = "Window/Hierarchy Quick Toggle";
+		#region Constants
+		private const string PrefKeyShowToggle = "UnityToolbag.QuickToggle.Visible";
+	    private const string PrefKeyShowDividers = "UnityToolbag.QuickToggle.Dividers";
+		private const string PrefKeyShowIcons = "UnityToolbag.QuickToggle.Icons";
 
-        private static readonly Type HierarchyWindowType;
-		private static GUIStyle styleLock, styleLockUnselected, styleVisOn, styleVisOff;
+		private const string MENU_NAME = "Window/Hierarchy Quick Toggle/Show Toggles";
+		private const string MENU_DIVIDER = "Window/Hierarchy Quick Toggle/Dividers";
+		private const string MENU_ICONS = "Window/Hierarchy Quick Toggle/Object Icons";
+		#endregion
+
+		private static readonly Type HierarchyWindowType;
+		private static readonly MethodInfo getObjectIcon;
+
+		private static bool stylesBuilt;
+		private static GUIStyle styleLock, styleUnlocked,
+								styleVisOn, styleVisOff,
+								styleDivider;
+
+	    private static bool showDivider, showIcons;
 
 		#region Menu stuff
-	    [MenuItem(MENU_NAME)]
-        static void QuickToggleMenu()
+	    [MenuItem(MENU_NAME, false, 1)]
+        private static void QuickToggleMenu()
         {
             bool toggle = EditorPrefs.GetBool(PrefKeyShowToggle);
             ShowQuickToggle(!toggle);
 			Menu.SetChecked(MENU_NAME, !toggle);
 		}
+
+		[MenuItem(MENU_NAME, true)]
+	    private static bool SetupMenuCheckMarks()
+		{
+			Menu.SetChecked(MENU_NAME, EditorPrefs.GetBool(PrefKeyShowToggle));
+			Menu.SetChecked(MENU_DIVIDER, EditorPrefs.GetBool(PrefKeyShowDividers));
+			Menu.SetChecked(MENU_ICONS, EditorPrefs.GetBool(PrefKeyShowIcons));
+			return true;
+	    }
+
+		[MenuItem(MENU_DIVIDER, false, 20)]
+	    private static void ToggleDivider()
+		{
+			ToggleSettings(PrefKeyShowDividers, MENU_DIVIDER, out showDivider);
+		}
+
+		[MenuItem(MENU_ICONS, false, 21)]
+	    private static void ToggleIcons()
+	    {
+			ToggleSettings(PrefKeyShowIcons, MENU_ICONS, out showIcons);
+	    }
+
+	    private static void ToggleSettings(string prefKey, string menuString, out bool valueBool)
+	    {
+		    valueBool = !EditorPrefs.GetBool(prefKey);
+			EditorPrefs.SetBool(prefKey, valueBool);
+			Menu.SetChecked(menuString, valueBool);
+			EditorApplication.RepaintHierarchyWindow();
+	    }
 		#endregion
 
 	    static QuickToggle()
 	    {
-		    if (EditorPrefs.HasKey(PrefKeyShowToggle) == false) {
-			    EditorPrefs.SetBool(PrefKeyShowToggle, false);
-		    }
+			// Setup initial state of editor prefs
+			string[] resetPrefs = new string[] {PrefKeyShowToggle, PrefKeyShowDividers, PrefKeyShowIcons};
+			foreach (string prefKey in resetPrefs)
+			{
+				if (EditorPrefs.HasKey(prefKey) == false)
+					EditorPrefs.SetBool(prefKey, false);
+			}
 
+			// Fetch some reflection/type stuff for use later on
 		    Assembly editorAssembly = typeof(EditorWindow).Assembly;
 		    HierarchyWindowType = editorAssembly.GetType("UnityEditor.SceneHierarchyWindow");
 
+			var flags = BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic;
+			Type editorGuiUtil = typeof (EditorGUIUtility);
+		    getObjectIcon = editorGuiUtil.GetMethod("GetIconForObject", flags, null, new Type[] { typeof(UnityEngine.Object) }, null);
+
+			// Not calling BuildStyles() in constructor because script gets loaded
+			// on Unity initialization, styles might not be loaded yet
+
+			// Reset mouse state and 
 			ResetVars();
-		    bool toggleIsOn = EditorPrefs.GetBool(PrefKeyShowToggle);
-            ShowQuickToggle(toggleIsOn);
+            ShowQuickToggle(EditorPrefs.GetBool(PrefKeyShowToggle));
 	    }
 
 	    private static void ShowQuickToggle(bool show)
 		{
 			EditorPrefs.SetBool(PrefKeyShowToggle, show);
+		    showDivider = EditorPrefs.GetBool(PrefKeyShowDividers, false);
+		    showIcons = EditorPrefs.GetBool(PrefKeyShowIcons, false);
 
 		    if (show)
             {
@@ -58,19 +115,19 @@ namespace UnityToolbag
             EditorApplication.RepaintHierarchyWindow();
         }
 
-	    private struct ObjectState
+	    private struct PropagateState
 	    {
-		    public bool propagateVisibility;
+		    public bool isVisibility;
 		    public bool propagateValue;
 
-		    public ObjectState(bool propagateVisibility, bool propagateValue)
+		    public PropagateState(bool isVisibility, bool propagateValue)
 		    {
-			    this.propagateVisibility = propagateVisibility;
+			    this.isVisibility = isVisibility;
 			    this.propagateValue = propagateValue;
 		    }
 	    }
 
-	    private static ObjectState	propagateState;
+	    private static PropagateState	propagateState;
 
 		// Because we can't hook into OnGUI of HierarchyWindow, doing a hack
 		// button that involves the editor update loop and the hierarchy item draw event
@@ -96,7 +153,7 @@ namespace UnityToolbag
 		    {
 			    if (window.wantsMouseMove == false)
 				    window.wantsMouseMove = true;
-
+				
 			    isFrameFresh = true;
 			}
 	    }
@@ -121,26 +178,56 @@ namespace UnityToolbag
             };
 
 			// Get states
-			bool isActive = target.activeSelf;
+			bool isVisible = target.activeSelf;
 			bool isLocked = (target.hideFlags & HideFlags.NotEditable) > 0;
 			
 			// Draw the visibility toggle
-		    GUIStyle visStyle = (isActive) ? styleVisOn : styleVisOff;
+		    GUIStyle visStyle = (isVisible) ? styleVisOn : styleVisOff;
 			GUI.Label(visRect, GUIContent.none, visStyle);
 
 			// Draw lock toggle
-			GUIStyle lockStyle = (isLocked) ? styleLock : styleLockUnselected;
-			GUI.Label(lockRect, GUIContent.none, lockStyle);
+			GUIStyle lockStyle = (isLocked) ? styleLock : styleUnlocked;
+            GUI.Label(lockRect, GUIContent.none, lockStyle);
 
-		    if (Event.current == null)
+			// Draw optional divider
+			if (showDivider)
+			{
+				Rect lineRect = new Rect(selectionRect)
+				{
+					yMin = selectionRect.yMax - 1f,
+					yMax = selectionRect.yMax + 2f
+				};
+				GUI.Label(lineRect, GUIContent.none, styleDivider);
+			}
+			// Draw optional object icons
+			if (showIcons && getObjectIcon != null)
+			{
+				Texture2D iconImg = getObjectIcon.Invoke(null, new object[] { target }) as Texture2D;
+				if (iconImg != null)
+				{
+					Rect iconRect = new Rect(selectionRect)
+					{
+						xMin = visRect.xMin - 30,
+						xMax = visRect.xMin - 5
+					};
+					GUI.DrawTexture(iconRect, iconImg, ScaleMode.ScaleToFit);
+				}
+			}
+
+			if (Event.current == null)
 			    return;
 
+			HandleMouse(target, isVisible, isLocked, visRect, lockRect);
+        }
+
+	    private static void HandleMouse(GameObject target, bool isVisible, bool isLocked, Rect visRect, Rect lockRect)
+	    {
 			Event evt = Event.current;
 
 			bool toggleActive = visRect.Contains(evt.mousePosition);
 			bool toggleLock = lockRect.Contains(evt.mousePosition);
 			bool stateChanged = (toggleActive || toggleLock);
-				
+
 			bool doMouse = false;
 			switch (evt.type)
 			{
@@ -158,10 +245,10 @@ namespace UnityToolbag
 					if (stateChanged && isMouseDown)
 					{
 						doMouse = true;
-						if (toggleActive) isActive = !isActive;
+						if (toggleActive) isVisible = !isVisible;
 						if (toggleLock) isLocked = !isLocked;
 
-						propagateState = new ObjectState(toggleActive, (toggleActive) ? isActive : isLocked);
+						propagateState = new PropagateState(toggleActive, (toggleActive) ? isVisible : isLocked);
 						evt.Use();
 					}
 					break;
@@ -175,17 +262,17 @@ namespace UnityToolbag
 					ResetVars();
 					break;
 			}
-				
+
 			if (doMouse && stateChanged)
 			{
-				if (propagateState.propagateVisibility)
+				if (propagateState.isVisibility)
 					SetVisible(target, propagateState.propagateValue);
 				else
 					SetLockObject(target, propagateState.propagateValue);
-				
+
 				EditorApplication.RepaintHierarchyWindow();
 			}
-        }
+		}
 
         private static Object[] GatherObjects(GameObject root)
         {
@@ -266,80 +353,38 @@ namespace UnityToolbag
         private static void BuildStyles()
         {
             // All of the styles have been built, don't do anything
-            if (styleLock != null &&
-                styleLockUnselected != null &&
-                styleVisOn != null &&
-				styleVisOff != null)
-            {
-                return;
-            }
-
-            // First, get the textures for the GUIStyles
-            Texture2D icnLockOn = null, icnLockOnActive = null;
-            bool normalPassed = false;
-            bool activePassed = false;
-
-            // Resource name of icon images
-            const string resLockActive = "IN LockButton on";
-            const string resLockOn = "IN LockButton on act";
-
-            // Loop through all of the icons inside Resources
-            // which contains editor UI textures
-            Texture2D[] resTextures = Resources.FindObjectsOfTypeAll<Texture2D>();
-            foreach (Texture2D resTexture in resTextures)
-            {
-                // Regular icon
-                if (resTexture.name.Equals(resLockOn))
-                {
-                    // if not using pro skin, use the first 'IN LockButton on'
-                    // that is passed when iterating
-                    if (!EditorGUIUtility.isProSkin && !normalPassed)
-                        icnLockOn = resTexture;
-                    else
-                        icnLockOn = resTexture;
-                    normalPassed = true;
-                }
-
-                // active icon
-                if (resTexture.name.Equals(resLockActive))
-                {
-                    if (!EditorGUIUtility.isProSkin && !activePassed)
-                        icnLockOnActive = resTexture;
-                    else
-                        icnLockOnActive = resTexture;
-                    activePassed = true;
-                }
-            }
-
-            // Now build the GUI styles
-            // Using icons different from regular lock button so that
-            // it would look darker
-            styleLock = new GUIStyle(GUI.skin.FindStyle("IN LockButton"))
-            {
-                onNormal = new GUIStyleState() { background = icnLockOn },
-                onHover = new GUIStyleState() { background = icnLockOn },
-                onFocused = new GUIStyleState() { background = icnLockOn },
-                onActive = new GUIStyleState() { background = icnLockOnActive },
-            };
-
-            // Unselected just makes the normal states have no lock images
-            var tempStyle = GUI.skin.FindStyle("OL Toggle");
-            styleLockUnselected = new GUIStyle(styleLock)
-            {
-                normal = tempStyle.normal,
-                active = tempStyle.active,
-                hover = tempStyle.hover,
-                focused = tempStyle.focused
-            };
+	        if (stylesBuilt)
+		        return;
+			
+			// Now build the GUI styles
+			// Using icons different from regular lock button so that
+			// it would look darker
+	        var tempStyle = GUI.skin.FindStyle("IN LockButton");
+	        styleLock = new GUIStyle(tempStyle)
+	        {
+				normal = tempStyle.onNormal,
+				active = tempStyle.onActive,
+				hover = tempStyle.onHover,
+				focused = tempStyle.onFocused,
+	        };
+			
+			// Unselected just makes the normal states have no lock images
+			tempStyle = GUI.skin.FindStyle("OL Toggle");
+	        styleUnlocked = new GUIStyle(tempStyle);
 
 	        tempStyle = GUI.skin.FindStyle("VisibilityToggle");
+
 			styleVisOff = new GUIStyle(tempStyle);
-			
             styleVisOn = new GUIStyle(tempStyle)
             {
 				normal = new GUIStyleState() { background = tempStyle.onNormal.background }
             };
 
+	        styleDivider = GUI.skin.FindStyle("EyeDropperHorizontalLine");
+
+	        stylesBuilt = (styleLock != null && styleUnlocked != null &&
+	                       styleVisOn != null && styleVisOff != null &&
+	                       styleDivider != null);
         }
     }
 }
