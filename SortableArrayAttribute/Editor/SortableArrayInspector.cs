@@ -83,14 +83,24 @@ namespace UnityToolbag
 					list.elementHeight = EditorGUI.GetPropertyHeight(targetElement, GUIContent.none, targetElement.isExpanded);
 				};
 
+				propList.onChangedCallback = delegate(ReorderableList list)
+				{
+					list.onSelectCallback(list);
+				};
+
 				// Unity 5.3 onwards allows reorderable lists to have variable element heights
-#if UNITY_5_3 || UNITY_5_4
+#if UNITY_5_3_OR_NEWER
 				propList.elementHeightCallback = delegate(int index)
 				{
 					SerializedProperty arrayElement = property.GetArrayElementAtIndex(index);
 					return EditorGUI.GetPropertyHeight(arrayElement, GUIContent.none, arrayElement.isExpanded);
 				};
 #endif
+				propList.onAddCallback = delegate(ReorderableList list)
+				{
+					list.serializedProperty.arraySize++;
+					propList.onSelectCallback(list);
+				};
 
 				propIndex.Add(property.propertyPath, propList);
 			}
